@@ -1,6 +1,34 @@
 # python file for the game
 
-# algorithm 1
+# algorithm 1 - Gosi
+def set_hiding_spot_likelihood(hiding_rooms, difficulty):
+    from random import randint
+    """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
+       difficulty. 
+
+    Args:
+        hiding_rooms (dict): collection of hiding spots (list of tuples) where 
+        the spoons may be hidden, containing the name of the hiding spot and its
+        likelihood value, rooms do not have likelihoods
+        difficulty (str): value of 'easy', 'medium', or 'hard', that dictates 
+        the range of likelihood between the hiding spots and how many decoy
+        spoons there are.
+    Side effects: 
+        Changes the likelihood value of hiding spots in the dictionary of hiding
+        rooms.
+    """
+    
+    rooms = hiding_rooms.keys()
+    
+    for room in rooms:
+        for hiding_spot in hiding_rooms[room]:
+            if(difficulty == 'easy'):
+                hiding_spot[1] = 1
+            elif(difficulty == 'medium'):
+                hiding_spot[1] = randint(1, 2)
+            else: 
+                hiding_spot[1] = randint(1, 3)
+    
 
 # algorithm 2
 
