@@ -30,7 +30,43 @@ def set_hiding_spot_likelihood(hiding_rooms, difficulty):
                 hiding_spot[1] = randint(1, 3)
     
 
-# algorithm 2
+# algorithm 2 - Andrew
+def set_skill(cpus, player, skills_list):
+    """Gives each of the players a skill.
+    The human picks whilst the computer is given a random skill.
+    No two players share the same skill.
+    
+    Args:
+        cpu (str): name of the computer player
+        player (str): name of the human player
+        skills_list (list): list of premade skills
+    Side effects:
+        Asks what skill the player wants to choose from.
+    Returns:
+        dict: mapping of the player and their skill    
+    """
+    import random
+    
+    assigned_skills = {}
+    available_skills = skills_list.copy()
+    
+    print("Available skills:")
+    for i, skill in enumerate(skills_list):
+        print(f"{1 + i}. {skill}")
+        
+    choice = int(input("Pick your skill: "))
+    player_skill = skills_list[choice - 1]
+    
+    assigned_skills[player] = player_skill
+    available_skills.remove(player_skill)
+    
+    for cpu in cpus:
+        skill = random.choice(available_skills)
+        assigned_skills[cpu] = skill
+
+        available_skills.remove(skill)
+        
+    return assigned_skills
 
 # algorithm 3 - Anna
 def swap_card (player, next_player):
