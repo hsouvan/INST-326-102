@@ -1,33 +1,92 @@
 # python file for the game
 import random
-card_deck = []
+
+# this function could probably add to a Game class - Anna
 card_suits = ["Heart", "Diamond", "Club", "Spade"]
-number_card = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+number_card = ["A", "2", "3", "4", "5", "6", "7", "8", "9", 
+                       "10", "J", "Q", "K"]
 def card_generate():
-    """Generate card deck"""
+    """Generate the card deck to play with
+    
+    Returns:
+        list: a list of the newly generated card deck"""
     card_deck = []
     for suit in card_suits:
         for number in number_card:
             card = suit + " " + number
             card_deck.append(card)
     return card_deck
+card_deck = card_generate()
 
-def dealing(card_deck):
-    """Deal card to player"""
-    cards = random.sample(card_deck, 4)
-    print(cards)
-    for card in cards:
+class Player:
+    """Representation of player
+    
+    Attributes:
+        name (str): name of the player
+        cards (list): player's current card deck
+    """
+    
+    def __init__(self, name):
+        """Create a player
+        
+        Args:
+            name (str): name of the player
+        
+        Side effects:
+            initialize the attributes"""
+        self.name = name
+        self.cards = []
+    
+    def dealing(self, card_deck):
+        """Dealing the card for each player
+        
+        Args:
+            card_deck (list): pile of cards
+        
+        Side effects:
+            add cards into players's card deck
+                remove card from the card_deck
+                print player's current card deck
+        """
+        self.cards = random.sample(card_deck, 4)
+        for card in self.cards:
+            card_deck.remove(card)
+        print(f"{self.name}'s card deck: {self.cards}")
+    
+    def first_player_turn(self, card_deck):
+        """Manage first player's turn
+        
+        Args:
+            card_deck (list): pile of cards
+            
+        Side effects:
+            add a card into player's card deck
+                remove card from the card_deck
+                print player's current card deck
+        """
+        card = random.choice(card_deck)
+        self.cards.append(card)
         card_deck.remove(card)
-    return cards
-
-def first_player_turn(player, card_deck):
-    """First player turn"""
-    card = random.choice(card_deck)
-    player.append(card)
-    card_deck.remove(card)
-    return player
-
-
+        print(self.cards)
+    
+    def swap_card (self, other):
+        """Manage player’s turn in discarding one of their card
+        
+        Args: 
+            other (Player): the next player
+        
+        Side effects:
+            print player's current card deck
+                ask player what card to discard to the next player, 
+                delete the card from player’s card deck, 
+                add the card to the next player’s card deck
+        """
+        print(f"{self.name}'s current card deck: {self.cards}")
+        chosen_card = input("What card do you want to discard to the next player?\n")
+        for card in self.cards:
+            if card == chosen_card:
+                del self.cards[card]
+        other.cards.append(card)
 
 
 # algorithm 1 - Gosi
@@ -97,25 +156,6 @@ def set_skill(cpus, player, skills_list):
         available_skills.remove(skill)
         
     return assigned_skills
-
-# algorithm 3 - Anna
-def swap_card (player, next_player):
-  """Manage player’s turn in discarding one of their card
-  Args: 
-    player (list):  the player card deck
-    next_player (list): the next player card deck
-  Side effects:
-    ask player what card to discard to the next player, 
-      delete the card from player’s card deck, 
-      add the card to the next player’s card deck
-  """
-  print(player)
-  chosen_card = input("What card do you want to discard to the next player?\n")
-  for card in player:
-    if card == chosen_card:
-      del player[card]
-  next_player.append(card)
-  print(f"Player's Card Deck: {player}\nNext Player's Card Deck: {next_player}")
 
 # algorithm 4 - Hunter
 def cpu_discard(cpu, next_player, cpu_hand, next_player_pile):
