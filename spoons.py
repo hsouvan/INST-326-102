@@ -1,4 +1,34 @@
 # python file for the game
+import random
+card_deck = []
+card_suits = ["Heart", "Diamond", "Club", "Spade"]
+number_card = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+def card_generate():
+    """Generate card deck"""
+    card_deck = []
+    for suit in card_suits:
+        for number in number_card:
+            card = suit + " " + number
+            card_deck.append(card)
+    return card_deck
+
+def dealing(card_deck):
+    """Deal card to player"""
+    cards = random.sample(card_deck, 4)
+    print(cards)
+    for card in cards:
+        card_deck.remove(card)
+    return cards
+
+def first_player_turn(player, card_deck):
+    """First player turn"""
+    card = random.choice(card_deck)
+    player.append(card)
+    card_deck.remove(card)
+    return player
+
+
+
 
 # algorithm 1 - Gosi
 def set_hiding_spot_likelihood(hiding_rooms, difficulty):
