@@ -68,19 +68,38 @@ class Player:
         self.cards.append(card)
         card_deck.remove(card)
         print(self.cards)
+    
+        """
+        If this method is placed in the game class, hiding spots can be made an
+        instance variable for Game objects, otherwise it must remain in params
         
-    def search(hiding_spot):
-        """_summary_
+        ^^^ with hiding rooms parameter
+        
+        """
+    def search(hiding_spot, hiding_spots, hiding_rooms):
+        """Allows a player to determine whether a hiding spot has a spoon (True)
+        or not (False)
 
+        Primary Author: Gosi 
         Args:
-            hiding_spot (_type_): _description_
-            
-        Raises:
-            Value Error: Hiding spots must be within the list of hiding spots or
-            else this error is raised.
+            hiding_spot (str): The name of the hiding spot that the player wants
+            to search
+            hiding_rooms (dict): collection of hiding spots (list of tuples) where 
+            the spoons may be hidden, containing the name of the hiding spot and
+            its integer likelihood value, its boolean has_spoon value (rooms do 
+            not have likelihoods)
+            hiding_spots(dict): complete key of all the hiding spots and their 
+            rooms
+        
+        Returns:
+            bool: True or False depending on whether there is a spoon hidden in 
+            that hiding spot
         """
         if hiding_spot not in hiding_rooms:
-            pass
+            print("Invalid hiding spot")
+            
+        return hiding_rooms[hiding_spots[hiding_spot]][hiding_spot][2] 
+             
         
         
     def player_seek_spoons(hiding_rooms):
