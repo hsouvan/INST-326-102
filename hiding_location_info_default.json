@@ -1,0 +1,42 @@
+
+
+{
+    "hiding_rooms" : {
+        "kitchen": [
+        ["drawer", 1, false],
+        ["cupboard", 1, false],
+        ["microwave", 1, false]
+        ],
+        "basement": [
+            ["desk", 1, false],
+            ["box", 1, false],
+            ["walls", 1, false]
+        ],
+        "dining room": [
+            ["chair", 1, false],
+            ["dining table", 1, false],
+            ["napkin", 1, false]
+        ],
+        "bedroom":[
+            ["bed", 1, false],
+            ["sink", 1, false],
+            ["dresser", 1, false]
+        ]
+    },
+
+    "hiding_spots_key" : {
+        "drawer" : "kitchen",
+        "cupboard" : "kitchen",
+        "microwave" : "kitchen",
+        "desk" : "basement",
+        "box" : "basement",
+        "walls" : "basement",
+        "chair" : "dining room",
+        "dining table" : "dining room",
+        "napkin" : "dining room",
+        "bed" : "bedroom",
+        "sink" : "bedroom",
+        "dresser" : "bedroom"
+    }
+    
+}
