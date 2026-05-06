@@ -30,8 +30,8 @@ class Player:
         
         Side effects:
             add cards into players's card deck
-                remove card from the card_deck
-                print player's current card deck
+            remove card from the card_deck
+            print player's current card deck
         """
         self.cards = random.sample(card_deck, 4)
         for card in self.cards:
@@ -47,8 +47,8 @@ class Player:
             
         Side effects:
             add a card into player's card deck
-                remove card from the card_deck
-                print player's current card deck
+            remove card from the card_deck
+            print player's current card deck
         """
         card = random.choice(card_deck)
         self.cards.append(card)
@@ -64,25 +64,67 @@ class Player:
         
         Side effects:
             print player's current card deck
-                ask player what card to discard to the next player, 
-                delete the card from player’s card deck, 
-                add the card to the next player’s card deck
+            ask player what card to discard to the next player, 
+            delete the card from player’s card deck, 
+            add the card to the next player’s card deck
         """
         print(f"{self.name}'s current card deck: {self.cards}")
-        chosen_card = input("What card do you want to discard to the next player?\n")
+        chosen_card = input("What card do you want to discard to the next" + 
+                            "player?\n")
         for card in self.cards:
             if card == chosen_card:
                 del self.cards[card]
         other.cards.append(card)
-    
+
+    def search(self, hiding_spot, hiding_rooms):
+        """Allows a player to determine whether a hiding spot has a spoon (True)
+        or not (False). If a spoon is found, hiding_spot value will be adjusted
+        accordingly
+        Author: Gosi
+        Editor: Anna
+        
+        Args:
+            hiding_spot (str): The name of the hiding spot that the player wants
+                to search
+            hiding_rooms (Game): collection of hiding spots (list of tuples) 
+                where the spoons may be hidden, containing the name of the 
+                hiding spot and its integer likelihood value, its boolean 
+                has_spoon value (rooms do not have likelihoods)
+        
+        Returns:
+            bool: True or False depending on whether there is a spoon hidden in 
+                that hiding spot
+            
+        Side Effects: 
+            Changes value of a hiding spot, its index 2 will be converted from 
+                True to False if a spoon hiding spot is correctly identified
+            Prints to terminal if a player tries to search invalid hiding spot  
+        """
+        if hiding_spot not in hiding_rooms:
+            print("Invalid hiding spot")
+        rooms = hiding_rooms.keys()
+            
+        room = hiding_rooms[hiding_spots[hiding_spot]]
+        if hiding_rooms[room][hiding_spot][2]:
+            hiding_rooms[room][hiding_spot][2] = False
+            return True
+        else:
+            return False    
     
 class Game:
+    """
+    
+    Attributes:
+        hiding_rooms (dict): collection of hiding spots (list of tuples)
+            where the spoons may be hidden, containing the name of the 
+            hiding spot and its likelihood value, rooms do not have 
+            likelihoods. All hiding spots musthave unique names.
+    """
     
     def __init__(self, players):
         card_suits = ["Heart", "Diamond", "Club", "Spade"]
         number_card = ["A", "2", "3", "4", "5", "6", "7", "8", "9", 
                        "10", "J", "Q", "K"]
-        #Generate the card deck to play with
         card_deck = []
         for suit in card_suits:
             for number in number_card:
@@ -91,73 +133,42 @@ class Game:
         self.card_deck = card_deck
         self.players = players
         self.hiding_rooms = {
-            "kitchen": [
-            ["drawer", 1, False],
-            ["cupboard", 1, False],
-            ["microwave", 1, False]
-            ],
-            "basement": [
-                ["desk", 1, False],
-                ["box", 1, False],
-                ["walls", 1, False]
-            ],
-            "dining room": [
-                ["chair", 1, False],
-                ["dining table", 1, False],
-                ["napkin", 1, False]
-            ],
-            "bedroom":[
-                ["bed", 1, False],
-                ["sink", 1, False],
-                ["dresser", 1, False]
-            ]
-        }
+            "Kitchen": [["drawer", 0, False], ["cabinet", 0], False, ["sink", 0,
+            False]], "Living Room": [["couch", 0, False], ["tv stand", 0, False]
+            , ["bookshelf", 0, False]], "Bedroom": [["pillow", 0, False], 
+            ["closet", 0, False], ["dresser", 0, False]]
+            }
         
         
+    def set_hiding_spot(self, difficulty):
+        """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
+        difficulty. 
+        Author: Gosi
+        Editor: Anna
         
-
-        """
-        If this method is placed in the game class, hiding spots can be made an
-        instance variable for Game objects, otherwise it must remain in params
-        
-        ^^^ with hiding rooms parameter
-        
-        """
-    def search(hiding_spot, hiding_spots, hiding_rooms):
-        """Allows a player to determine whether a hiding spot has a spoon (True)
-        or not (False). If a spoon is found, hiding_spot value will be adjusted
-        accordingly
-
-        Primary Author: Gosi 
         Args:
-            hiding_spot (str): The name of the hiding spot that the player wants
-            to search
-            hiding_rooms (dict): collection of hiding spots (list of tuples) where 
-            the spoons may be hidden, containing the name of the hiding spot and
-            its integer likelihood value, its boolean has_spoon value (rooms do 
-            not have likelihoods)
-            hiding_spots(dict): complete key of all the hiding spots and their 
-            rooms
+            difficulty (str): value of 'easy', 'medium', or 'hard', that 
+                dictates the range of likelihood between the hiding spots.
         
-        Returns:
-            bool: True or False depending on whether there is a spoon hidden in 
-            that hiding spot
-            
-        Side Effects: 
-            Changes value of a hiding spot, its index 2 will be converted from 
-            True to False if a spoon hiding spot is correctly identified
-            
-            Prints to terminal if a player tries to search invalid hiding spot  
+        Side effects: 
+            Changes the likelihood value of hiding spots in the dictionary of 
+                hiding rooms.
+            return ValueError if provided a wrong difficulty level
         """
-        if hiding_spot not in hiding_rooms:
-            print("Invalid hiding spot")
+        rooms = self.hiding_rooms.keys()
+        
+        for room in rooms:
+            for hiding_spot in self.hiding_rooms[room]:
+                if(difficulty == "easy"):
+                    hiding_spot[1] = 1
+                elif(difficulty == "medium"):
+                    hiding_spot[1] = random.randint(1, 2)
+                elif(difficulty == "hard"): 
+                    hiding_spot[1] = random.randint(1, 3)
+                else:
+                    return ValueError("Wrong Difficulty Level.")
             
-        room = hiding_rooms[hiding_spots[hiding_spot]]
-        if hiding_rooms[room][hiding_spot][2]:
-            hiding_rooms[room][hiding_spot][2] = False
-            return True
-        else:
-            return False
+
             
              
         
@@ -212,36 +223,7 @@ and make hiding_rooms a variable upon intialization
 
 if in Game class, add randint import at beginning of game class 
 """
-def set_hiding_spot_likelihood(hiding_rooms, difficulty = 2):
-    from random import randint
-    """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
-       difficulty. 
 
-    Primary Author: Gosi
-    
-    Techniques Demonstrated:
-    
-    Args:
-        hiding_rooms (dict): collection of hiding spots (list of tuples) where 
-        the spoons may be hidden, containing the name of the hiding spot and its
-        likelihood value, rooms do not have likelihoods. All hiding spots must
-        have unique names.
-        difficulty (str): value of 'easy', 'medium', or 'hard', that dictates 
-        the range of likelihood between the hiding spots.
-    Side effects: 
-        Changes the likelihood value of hiding spots in the dictionary of hiding
-        rooms.
-    """
-    rooms = hiding_rooms.keys()
-    
-    for room in rooms:
-        for hiding_spot in hiding_rooms[room]:
-            if(difficulty == 'easy'):
-                hiding_spot[1] = 1
-            elif(difficulty == 'medium'):
-                hiding_spot[1] = randint(1, 2)
-            else: 
-                hiding_spot[1] = randint(1, 3)
 
 """
 may not need hiding_rooms parameter if we place hiding methods in the Game class 

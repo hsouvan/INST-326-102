@@ -13,13 +13,7 @@ def main():
         Player("CPU 3")
     ]
 
-    hiding_rooms = {
-        "Kitchen": [["drawer", 0], ["cabinet", 0], ["sink", 0]],
-        "Living Room": [["couch", 0], ["tv stand", 0], ["bookshelf", 0]],
-        "Bedroom": [["pillow", 0], ["closet", 0], ["dresser", 0]]
-    }
-
-    set_hiding_spot_likelihood(hiding_rooms, "medium")
+    set_hiding_spot("medium")
 
     human.dealing(deck)
 
