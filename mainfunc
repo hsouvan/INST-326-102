@@ -1,0 +1,57 @@
+def main():
+    deck = card_generate()
+    random.shuffle(deck)
+
+    print("Welcome to Spoons!")
+
+    name = input("\nEnter your name: ")
+    human = Player(name)
+
+    cpus = [
+        Player("CPU 1"),
+        Player("CPU 2"),
+        Player("CPU 3")
+    ]
+
+    hiding_rooms = {
+        "Kitchen": [["drawer", 0], ["cabinet", 0], ["sink", 0]],
+        "Living Room": [["couch", 0], ["tv stand", 0], ["bookshelf", 0]],
+        "Bedroom": [["pillow", 0], ["closet", 0], ["dresser", 0]]
+    }
+
+    set_hiding_spot_likelihood(hiding_rooms, "medium")
+
+    human.dealing(deck)
+
+    for cpu in cpus:
+        cpu.cards = random.sample(deck, 4)
+
+        for card in cpu.cards:
+            deck.remove(card)
+
+    while True:
+        play_round(deck, human, cpus)
+
+        if has_four_of_a_kind(human.cards):
+            choice = choose_hiding_spot(hiding_rooms)
+
+            if check_for_spoon(choice):
+                print(f"\n {human.name} wins! ")
+                break
+
+        for cpu in cpus:
+            if has_four_of_a_kind(cpu.cards):
+                room = random.choice(list(hiding_rooms.keys()))
+                spot = random.choice(hiding_rooms[room])
+
+                print(f"\n{cpu.name} searches {spot[0]} in {room}...")
+
+                if check_for_spoon((room, spot)):
+                    print(f"\n{cpu.name} wins!")
+                    return
+
+    print("\nGame Over.")
+
+
+if __name__ == "__main__":
+    main()
