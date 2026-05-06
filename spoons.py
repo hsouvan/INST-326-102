@@ -100,11 +100,20 @@ class Player:
                 True to False if a spoon hiding spot is correctly identified
             Prints to terminal if a player tries to search invalid hiding spot  
         """
-        if hiding_spot not in hiding_rooms:
-            print("Invalid hiding spot")
-        rooms = hiding_rooms.keys()
+        search = input("Where do you want to search?\n" + 
+                            "(Type the room and the spot)").split()
+        room = search[0].capitalize()
+        hiding_spot = search[1].lower()
+        
+        if room in hiding_rooms and hiding_spot in [t[0] for t in 
+                                                    hiding_rooms[room]]:
+            pass
+        else:
+            print("Invalid Search")
+                
             
-        room = hiding_rooms[hiding_spots[hiding_spot]]
+        hiding_spots = hiding_rooms[room]
+        
         if hiding_rooms[room][hiding_spot][2]:
             hiding_rooms[room][hiding_spot][2] = False
             return True
