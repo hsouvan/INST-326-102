@@ -80,7 +80,7 @@ class Player:
         
     
         
-    # GAME SHIFTS FROM CARDS TO SPOONS HERE per player based
+    # GAME STATE MANAGEMENT
     def check_four_of_a_kind(self):
         """Checks for four of a kind in a player's hand.
         
@@ -123,52 +123,117 @@ class Player:
         else:
             self.search(game.hiding_rooms)
             
-
-    def search(self, hiding_spot, hiding_rooms):
+    #SEARCHING FOR SPOONS
+    def search(self, hiding_rooms):
         """Allows a player to determine whether a hiding spot has a spoon (True)
-        or not (False). If a spoon is found, hiding_spot value will be adjusted
-        accordingly
+        or not (False). If a spoon is found, they win and the game ends.
         Author: Gosi
-        Editor: Anna
+        Editor: Anna & Andrew
         
         Args:
-            hiding_spot (str): The name of the hiding spot that the player wants
-                to search
-            hiding_rooms (Game): collection of hiding spots (list of tuples) 
-                where the spoons may be hidden, containing the name of the 
-                hiding spot and its integer likelihood value, its boolean 
-                has_spoon value (rooms do not have likelihoods)
+            hiding_rooms (dict): hiding rooms which each have lists of hiding
+            spots. Each hiding spot is a list that looks like this:
+            [spot_name (str), likelihood (int), has_spoon (bool)]
         
         Returns:
             bool: True or False depending on whether there is a spoon hidden in 
                 that hiding spot
             
         Side Effects: 
-            Changes value of a hiding spot, its index 2 will be converted from 
-                True to False if a spoon hiding spot is correctly identified
-            Prints to terminal if a player tries to search invalid hiding spot  
+            Prompts user for inputs for selecting room and hiding spot.
+            Prints result of a search to the terminal (includes invalid)
+            input messages or success/failure messages
         """
-        search = input("Where do you want to search?\n" + 
-                            "(Type the room and the spot)").split()
-        room = search[0].capitalize()
-        hiding_spot = search[1].lower()
         
-        if room in hiding_rooms and hiding_spot in [t[0] for t in 
-                                                    hiding_rooms[room]]:
-            pass
-        else:
-            print("Invalid Search")
+        print("Rooms:")
+        for room in hiding_rooms:
+            print(room)
+
+        searched_room = input("Where do you want to search?\n").lower()
+        
+        if searched_room not in hiding_rooms:
+            print("Invalid room.")
+            return False
+        
+        print("Hiding spots:")
+        for spot in hiding_rooms[searched_room]:
+            print(spot[0])
+        
+        selected_spot = input("Which spot do you want to search?\n").lower()
+        return self.check_spot(hiding_rooms, searched_room, selected_spot)
+    
+    
+    #separated this portion of the search method for reusability
+    def check_spot(self, hiding_rooms, room, selected_spot):
+        for spot in hiding_rooms[room]:
+            if spot[0] == selected_spot:
+                if spot[2]:
+                    print(f"{self.name} found a spoon! {self.name} WINS!!!")
+                    return True
+                else:
+                    print("No spoon found.")
+                    return False
                 
-            
-        hiding_spots = hiding_rooms[room]
-        
-        if hiding_rooms[room][hiding_spot][2]:
-            hiding_rooms[room][hiding_spot][2] = False
+        print("Invalid hiding spot.")
+        return False
+    
+    def cpu_search(self, hiding_rooms):
+        room = random.choice(list(hiding_rooms.keys()))
+        spot = random.choice(hiding_rooms[room])
+    
+        print(f"{self.name} searches the {room} - {spot[0]}")
+    
+        if spot[2]:
+            print(f"{self.name} found a spoon! {self.name} WINS!!!")
             return True
         else:
-            return False    
+            print(f"{self.name} found nothing.")
+            return False
     
-
+    
+    #SKILLS RELATED TO SEARCHING FOR SPOONS
+    #SPOON COMPASS
+    def spoon_compass(self, hiding_rooms):
+        rooms_with_spoons = []
+        
+        for room in hiding_rooms:
+            for spot in hiding_rooms[room]:
+                if spot[2]:
+                    rooms_with_spoons.append(room)
+        
+        rooms_with_spoons = list(set(rooms_with_spoons))
+        
+        if len(rooms_with_spoons) == 1:
+            print(f"The compass strongly points towards the {rooms_with_spoons}!")
+            return rooms_with_spoons[0]
+        else:
+            print("The compass is spinning its pointer between two rooms!")
+            print(f"It points to the following rooms: {rooms_with_spoons}")
+            return rooms_with_spoons
+    
+    #OH SHINY!
+    def oh_shiny(self, hiding_rooms):
+        room = input("Pick a room to scan:\n").lower()
+        
+        if room not in hiding_rooms:
+            print("Invalid room")
+            return False
+        
+        spoon_found = any(spot[2] for spot in hiding_rooms[room])
+        
+        if not spoon_found:
+            print(f"The room has no spoons in the {room}")
+            return False
+        
+        print(f"Your scan revealed a spoon in the {room}!")
+        #now that a spoon was scanned in selected room, follow-up
+        #in the same turn for searching a spot
+        print("Now you can search for a spot the spoon might be in:")
+        for spot in hiding_rooms[room]:
+            print(spot[0])
+        
+        selected_spot = input("Which spot do you select?\n").lower()
+        return self.check_spot(hiding_rooms, room, selected_spot)
     
 class Game:
     """
@@ -192,10 +257,18 @@ class Game:
         self.card_deck = card_deck
         self.players = players
         self.hiding_rooms = {
-            "Kitchen": [["drawer", 0, False], ["cabinet", 0], False, ["sink", 0,
-            False]], "Living Room": [["couch", 0, False], ["tv stand", 0, False]
-            , ["bookshelf", 0, False]], "Bedroom": [["pillow", 0, False], 
-            ["closet", 0, False], ["dresser", 0, False]]
+            "Kitchen": [
+                ["drawer", 0, False], 
+                ["cabinet", 0, False], 
+                ["sink", 0, False]], 
+            "Living Room": [
+                ["couch", 0, False], 
+                ["tv stand", 0, False], 
+                ["bookshelf", 0, False]], 
+            "Bedroom": [
+                ["pillow", 0, False], 
+                ["closet", 0, False], 
+                ["dresser", 0, False]]
             }
         
         
@@ -227,50 +300,6 @@ class Game:
                 else:
                     return ValueError("Wrong Difficulty Level.")
             
-
-            
-             
-        
-        
-    def player_seek_spoons(hiding_rooms):
-        """ Dictates how a player is able to find spoons from list of hiding 
-            spots. Spoon-seeking ability may be affected by the player's given
-            skill.
-            
-            Primary author: Gosi
-            
-            Techniques used:
-            
-            Args:
-                hiding_rooms (dict): collection of hiding spots (list of tuples)
-                where the spoons may be hidden, containing the name of the 
-                hiding spot and its likelihood value, rooms do not have 
-                likelihoods.
-            
-            Side Effects:
-                Prints to terminal to give list of rooms/hiding spots to search 
-                and to prompt player to enter a guess at where the spoon is
-                
-                Prints to terminal to report results of search attempt
-        """
-        rooms_list = list(hiding_rooms.keys())
-        print(f"""Spoons may be located in...\n""")
-        for room in rooms_list:
-            print(room)
-            
-        room_answer = input(f"{self.name}, where would you like to search?" 
-                            f"Remember,you have the {self.skill} skill...").strip()
-        print(f"The {room_answer} hiding spots are...")
-        for spot in hiding_rooms[room_answer]:
-            print(spot[0])
-        
-        spot_answer = input(f"{self.name}, where would you like to search?").strip()
-        
-        if search(spot_answer.strip()) == True:
-            print(f"{self.name} found a spoon in the {room_answer} in "
-                  f"{spot_answer}!")
-        else:
-            print(f"{self.name} did not find a spoon this time.")
             
     
 
@@ -364,21 +393,7 @@ def set_skill(players, skills_list):
         
         
 
-def cpu_search(self, hiding_rooms):
-    import random
     
-    room = random.choice(list(hiding_rooms.keys()))
-    spot = random.choice(hiding_rooms[room])
-    
-    print(f"{self.name} searches the {room} - {spot[0]}")
-    
-    if spot[2]:
-        spot[2] = False
-        print(f"{self.name} found a spoon!")
-        return True
-    else:
-        print(f"{self.name} found nothing.")
-        return False    
 
 # algorithm 4 - Hunter
 def cpu_discard(cpu, next_player, cpu_hand, next_player_pile):
