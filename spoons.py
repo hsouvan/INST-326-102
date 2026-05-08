@@ -82,8 +82,6 @@ class Player:
                 print(f"{self.name} has 4 of a kind! They can now search for " +
                       "the spoon!")
 
-            
-    #SEARCHING FOR SPOONS
     def search(self, hiding_rooms):
         """Allows a player to determine whether a hiding spot has a spoon (True)
         or not (False). If a spoon is found, they win and the game ends.
@@ -98,6 +96,12 @@ class Player:
                 that hiding spot
         """
         raise NotImplementedError
+    
+    def set_skill(self, skills_list):
+        """
+        """
+        pass
+        
     
 
 class HumanPlayer(Player):
@@ -214,12 +218,11 @@ class HumanPlayer(Player):
         rooms_with_spoons = list(set(rooms_with_spoons))
         
         if len(rooms_with_spoons) == 1:
-            print(f"The compass strongly points towards the {rooms_with_spoons}!")
-            return rooms_with_spoons[0]
+            print(f"The compass strongly points towards the {rooms_with_spoons}"
+                  + "!")
         else:
             print("The compass is spinning its pointer between two rooms!")
             print(f"It points to the following rooms: {rooms_with_spoons}")
-            return rooms_with_spoons
     
     #OH SHINY!
     def oh_shiny(self, hiding_rooms):
@@ -404,7 +407,7 @@ class Game:
                 if key[0] == hide_spot:
                     key[2] = True
 
-    def take_turn(self, player):
+    def turn(self, player):
         """Determines if a player is still trying for four of a kind,
         or searching for spoons.
         """
@@ -418,7 +421,18 @@ class Game:
             player.check_four_of_a_kind()
             return False
         elif player.mode == "spoons":
-            return player.search(self.hiding_rooms)
+            if isinstance(player, HumanPlayer):
+                skill_use = input("Do you want to use your skill? (y/n) ")
+                if skill_use.ower() == "y":
+                    if player.skill == "Name":
+                        player.spoon_compass(self.hiding_rooms)
+                        return False
+                    elif player.skill == "Name":
+                        return player.oh_shiny(self.hiding_rooms)
+                else:
+                    return player.search(self.hiding_rooms)
+            else:    
+                return player.search(self.hiding_rooms)
         
             
     # #running the turn system
@@ -431,13 +445,14 @@ class Game:
     #     for player in self.players:
     #         pass
 
-    def play_search_round(self): 
-        """Players who have found 4 of a kind, or are the last to find 4 of a 
-        kind may search for spoons in the designated hiding spots.
-        """
+    # def play_search_round(self): 
+    #     """Players who have found 4 of a kind, or are the last to find 4 of a 
+    #     kind may search for spoons in the designated hiding spots.
+    #     """
 
-            for player in self.players:
-                while(self.calc_spoons() > 0):
+    #         for player in self.players:
+    #             while(self.calc_spoons() > 0):
+    #                 pass
                     
         
     # def calc_spoons(self):
@@ -467,6 +482,7 @@ class Game:
         win = False
         for player in self.players:
             player.dealing(self.card_deck)
+            player.set_skill(self.skills_list)
         turn = -1
         player = self.players[0].draw_card(self.card_deck)
         while not win:
