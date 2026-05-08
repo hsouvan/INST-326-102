@@ -2,6 +2,7 @@
 import random
 import json
 from argparse import ArgumentParser
+from sys import argv
 
 class Player:
     """Representation of player
@@ -9,9 +10,11 @@ class Player:
     Attributes:
         name (str): name of the player
         cards (list): player's current card deck
+        is_cpu (bool): whether or not a player is a computer, True if yes,
+            default is False / human player
     """
     
-    def __init__(self, name):
+    def __init__(self, name, is_cpu = False):
         """Create a player
         Author: Anna
         
@@ -24,7 +27,7 @@ class Player:
         self.cards = []
         self.skill = None
         self.mode = "cards"
-        self.is_cpu = False
+        self.is_cpu = is_cpu
     
     def dealing(self, card_deck):
         """Dealing the card for each player
@@ -219,35 +222,35 @@ class Player:
             return False
     
     # algorithm 2 - Andrew
-def set_skill(players, skills_list):
-    """Gives each of the players a skill.
-    The human picks whilst the computer is given a random skill.
-    No two players share the same skill.
-    
-    Args:
-        cpu (str): name of the computer player
-        player (str): name of the human player
-        skills_list (list): list of premade skills
-    Side effects:
-        Asks what skill the player wants to choose from.
-    Returns:
-        dict: mapping of the player and their skill    
-    """
-    
-    available_skills = skills_list.copy()
-    
-    print("Available skills:")
-    for i, skill in enumerate(skills_list):
-        print(f"{i + 1}. {skill}")
+    def set_skill(players, skills_list):
+        """Gives each of the players a skill.
+        The human picks whilst the computer is given a random skill.
+        No two players share the same skill.
         
-    choice = int(input("Pick your skill: "))
-    players[0].skill = skills_list[choice - 1]
-    available_skills.remove(players[0].skill)
-    
-    for player in players[1:]:
-        skill = random.choice(available_skills)
-        player.skill = skill
-        available_skills.remove(skill)
+        Args:
+            cpu (str): name of the computer player
+            player (str): name of the human player
+            skills_list (list): list of premade skills
+        Side effects:
+            Asks what skill the player wants to choose from.
+        Returns:
+            dict: mapping of the player and their skill    
+        """
+        
+        available_skills = skills_list.copy()
+        
+        print("Available skills:")
+        for i, skill in enumerate(skills_list):
+            print(f"{i + 1}. {skill}")
+            
+        choice = int(input("Pick your skill: "))
+        players[0].skill = skills_list[choice - 1]
+        available_skills.remove(players[0].skill)
+        
+        for player in players[1:]:
+            skill = random.choice(available_skills)
+            player.skill = skill
+            available_skills.remove(skill)
         
     #SKILLS RELATED TO SEARCHING FOR SPOONS
     #SPOON COMPASS
@@ -305,6 +308,10 @@ class Game:
             values are the rooms in which they are located 
         hiding_info (str): name of the json file in which the hiding spot and 
             hiding room dictionaries are located
+        players (list): a list of Player objects, the human player will always
+            be the first item in the list, followed by two computers
+        num_spoons (int): number of spoons to be found, usually one less than 
+            the number of players
     """
     
     def __init__(self, players, hiding_info):
@@ -321,6 +328,9 @@ class Game:
         self.hiding_info = hiding_info
         self.hiding_spots = None
         self.hiding_rooms = None
+        self.num_spoons = len(players) - 1
+        
+        json_to_dict()
         
     def json_to_dict(self):
         """Converts json file instance variable to relevant dictionaries. 
@@ -369,30 +379,21 @@ class Game:
                 else:
                     return ValueError("Wrong Difficulty Level.")
                 
-    def hide_spoons(hiding_rooms, hiding_spots, num_spoons):
+    def hide_spoons(self):
         from random import randint
-        """Sets index two of of a hiding spot in the dictionary hiding rooms to True
-        if a spoon will be placed there. There will be number of players - 1 spoons
-        hidden in a given game. To ensure proper randomization, rooms w
+        """Sets index two of of a hiding spot in the dictionary hiding rooms to 
+        True if a spoon will be placed there. There will be number of 
+        players - 1 spoons hidden in a given game most often. 
 
         Primary Author: Gosi
         
         Techniques Used: 
         
-        Args: 
-            hiding_rooms (dict): collection of hiding spots (list of tuples) where 
-            the spoons may be hidden, containing the name of the hiding spot and its
-            integer likelihood value, its boolean has_spoon value (rooms do not have
-            likelihoods)
-            hiding_spots(dict): complete key of all the hiding spots and their rooms
-            num_players: an integer representing the number of spoons to be hidden
-            
-        
         Side Effects: 
             Changes the value of hiding_spot[2] where hiding spot is a 
             value in hiding rooms. True means a spoon is hidden there.
         """
-        all_rooms = hiding_rooms.values()
+        all_rooms = self.hiding_rooms.values()
         all_hiding_spots = set()
         for room in all_rooms:
             all_hiding_spots = set(room) | all_hiding_spots
@@ -400,25 +401,59 @@ class Game:
         
         weighted_hiding_spots = all_hiding_spots.copy()
         for spot in all_hiding_spots:
-            if spot[2] > 1:
-                for likelihood in range(spot[2] - 1):
+            if spot[1] > 1:
+                for likelihood in range(spot[1] - 1):
                     weighted_hiding_spots.append(spot)
         
         for spoon in range(num_spoons):
             hide_spot = weighted_hiding_spots[
-                random.randint(0, len(weighted_hiding_spots))]
-            hiding_rooms[hiding_spots[hide_spot[0]]][hide_spot[0]][2] = True
+                random.randint(0, len(weighted_hiding_spots)-1)][0]
+            self.hiding_rooms[self.hiding_spots[hide_spot]][hide_spot][2] = True
             
-def main(): 
+    def __str__(self):
+        remaining_spoons = 0
+        for value in self.hiding_rooms:
+            for spot in value:
+                if spot[2]:
+                    remaining_spoons += 1
+                if remaining_spoons >= self.num_spoons:
+                    break
+            if remaining_spoons >= self.num_spoons:
+                    break
+                
+        print(f"There is/are {remaining_spoons} spoon(s) left!")
+        
+    def __repr__(self):
+        print(f"Here are the hiding spot details: {self.hiding_rooms}")
+        
+            
+def main(filepath): 
     is_playing = True
     
     while is_playing:
         player_name = input("What is your name? ")
+        human = Player(player_name)
+        cpu1 = Player('cpu1', True)
+        cpu2 = Player('cpu2', True)
+        
+        game_state = Game([human, cpu1, cpu2], filepath)
+        game_state.set_hiding_spot('hard')
+        game.state.hid
+
+        keep_playing = input("Would you like to play again? Y/N: ")
+        is_playing = True if keep_playing == 'Y' else False
         
     
 def parse_args(arglist):
     """Reads in filepath to json file of hiding spot information with hiding 
     room and hiding spot dictionaries"""
+    argpar = ArgumentParser()
+    argpar.add_argument("filepath", help = """a filepath to json file of hiding
+                        locations, should be two dictionaries named hiding_rooms
+                        and hiding_spots""")
+    return argpar.parse_args(arglist)
+    
+    
 if __name__ == "__main__":
-    args
-    main()
+    args = parse_args(argv[1:])
+    main(args.filepath)
