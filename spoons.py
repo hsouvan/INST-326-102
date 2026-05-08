@@ -364,6 +364,8 @@ class Game:
         
         Primary Author: Gosi
         
+        Techniques Demonstrated: json.load(), with keyword
+        
         Side Effects: 
             Changes values of hiding_rooms and hiding_spots to the dictionaries
             in the json file
@@ -411,8 +413,6 @@ class Game:
         
         Primary Author: Gosi
         
-        Techniques Used: 
-        
         Side Effects: 
             Changes the value of hiding_spot[2] where hiding spot is a 
             value in hiding rooms. True means a spoon is hidden there.
@@ -459,6 +459,8 @@ class Game:
     def play_card_round(self):
         """All players take their turns in the card game. If all players have
         found their 4 of a kind, no card round will take place.
+        
+        Primary Author: Gosi
         """
         
         
@@ -518,7 +520,10 @@ def main(filepath):
     
 def parse_args(arglist):
     """Reads in filepath to json file of hiding spot information with hiding 
-    room and hiding spot dictionaries"""
+    room and hiding spot dictionaries
+    
+    Primary Author: Gosi
+    """
     argpar = ArgumentParser()
     argpar.add_argument("filepath", help = """a filepath to json file of hiding
                         locations, should be two dictionaries named hiding_rooms
