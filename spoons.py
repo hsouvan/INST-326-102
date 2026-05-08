@@ -16,7 +16,6 @@ class Player:
     
     def __init__(self, name, is_cpu = False):
         """Create a player
-        Author: Anna
         
         Args:
             name (str): name of the player
@@ -27,7 +26,6 @@ class Player:
         self.cards = []
         self.skill = None
         self.mode = "cards"
-        self.is_cpu = is_cpu
     
     def dealing(self, card_deck):
         """Dealing the card for each player
@@ -47,7 +45,6 @@ class Player:
     
     def draw_card(self, card_deck):
         """Draws a card from the deck (random) and adding to player's hand
-        Author: Anna
         
         Args:
             card_deck (list): pile of cards remaining
@@ -63,53 +60,14 @@ class Player:
         print(self.cards)
         
     def swap_card (self, other):
-        """Manage player’s turn in discarding one of their card
-        Author: Anna
+        """Manage human player’s turn in discarding one of their card
         
         Args: 
             other (Player): the next player
         
-        Side effects:
-            print player's current card deck
-            ask player what card to discard to the next player, 
-            delete the card from player’s card deck, 
-            add the card to the next player’s card deck
         """
-        print(f"{self.name}'s current card deck: {self.cards}")
-        chosen_card = input("What card do you want to discard to the next" + 
-                            "player?\n")
-        for card in self.cards:
-            if card == chosen_card:
-                del self.cards[card]
-        other.cards.append(card)
+        raise NotImplementedError
         
-    # algorithm 4 - Hunter
-    def cpu_discard(cpu, next_player, cpu_hand, next_player_pile):
-        """
-        Allows the computer to decide what card to discard in Spoons.
-        
-        Parameters:
-            cpu (str): Name of the computer player
-            next_player (str): Name of the next player
-            cpu_hand (list of str): The computer's current hand
-            next_player_pile (list of str): The next players trash pile
-
-        Returns:
-            str or None: The card that was discarded, or None
-
-        Side Effects:
-            Removes the discarded card from cpu_hand
-            Adds the discarded card to the next_player_pile
-        """
-        for i in range(len(cpu_hand)):
-            for j in range(i + 1, len(cpu_hand)):
-                if cpu_hand[i][:-1] == cpu_hand[j][:-1]:
-                    for card in cpu_hand:
-                        if card[:-1] != cpu_hand[i][:-1]:
-                            cpu_hand.remove(card)
-                            next_player_pile.append(card)
-                            return card
-        return None
         
     # GAME STATE MANAGEMENT
     def check_four_of_a_kind(self):
@@ -117,49 +75,48 @@ class Player:
         
         Side effects:
             Once a player is confirmed to have four of a kind,
-            they start checking for spoons."""
-    
+            they start checking for spoons.
+        """
         ranks = [card.split(" ", 1)[1] for card in self.cards]
     
         for rank in ranks:
             if ranks.count(rank) == 4:
                 self.mode = "spoons"
-                print(f"{self.name} has 4 of a kind, and will not look for spoons!")
+                print(f"{self.name} has 4 of a kind, and wins the game!")
                 return True
         return False
     
     
-    def card_turn(self, game):
-        if self.is_cpu:
-            self.draw_card(game.card_deck)
-        else:
-            # human player
-            pass
+    
+    # def card_turn(self, game):
+    #     if self.is_cpu:
+    #         self.draw_card(game.card_deck)
+    #     else:
+    #         # human player
+    #         pass
     
     
-    def take_turn(self, game):
-        """Determines if a player is still trying for four of a kind,
-        or searching for spoons.
-        """
-        if self.mode == "cards":
-            self.card_turn(game)
-            self.check_four_of_a_kind()
-        elif self.mode == "spoons":
-            self.spoon_turn(game)
+    # def take_turn(self, other, hiding_rooms):
+    #     """Determines if a player is still trying for four of a kind,
+    #     or searching for spoons.
+    #     """
+    #     if self.mode == "cards":
+    #         self.self.swap_card(other)
+    #         self.check_four_of_a_kind()
+    #     elif self.mode == "spoons":
+    #         self.search(hiding_rooms)
     
     
-    def spoon_turn(self, game):
-        if self.is_cpu:
-            self.cpu_search(game.hiding_rooms)
-        else:
-            self.search(game.hiding_rooms)
+    # def spoon_turn(self, game):
+    #     if self.is_cpu:
+    #         self.cpu_search(game.hiding_rooms)
+    #     else:
+    #         self.search(game.hiding_rooms)
             
     #SEARCHING FOR SPOONS
     def search(self, hiding_rooms):
         """Allows a player to determine whether a hiding spot has a spoon (True)
         or not (False). If a spoon is found, they win and the game ends.
-        Author: Gosi
-        Editor: Anna & Andrew
         
         Args:
             hiding_rooms (dict): hiding rooms which each have lists of hiding
@@ -169,59 +126,24 @@ class Player:
         Returns:
             bool: True or False depending on whether there is a spoon hidden in 
                 that hiding spot
-            
-        Side Effects: 
-            Prompts user for inputs for selecting room and hiding spot.
-            Prints result of a search to the terminal (includes invalid)
-            input messages or success/failure messages
         """
-        
-        print("Rooms:")
-        for room in hiding_rooms:
-            print(room)
-
-        searched_room = input("Where do you want to search?\n").lower()
-        
-        if searched_room not in hiding_rooms:
-            print("Invalid room.")
-            return False
-        
-        print("Hiding spots:")
-        for spot in hiding_rooms[searched_room]:
-            print(spot[0])
-        
-        selected_spot = input("Which spot do you want to search?\n").lower()
-        return self.check_spot(hiding_rooms, searched_room, selected_spot)
-    
+        raise NotImplementedError
     
     #separated this portion of the search method for reusability
     def check_spot(self, hiding_rooms, room, selected_spot):
         for spot in hiding_rooms[room]:
             if spot[0] == selected_spot:
                 if spot[2]:
-                    print(f"{self.name} found a spoon! {self.name} WINS!!!")
+                    print(f"A spoon has been found! {self.name} WINS!!!")
                     return True
                 else:
                     print("No spoon found.")
                     return False
                 
         print("Invalid hiding spot.")
-        return False
-    
-    def cpu_search(self, hiding_rooms):
-        room = random.choice(list(hiding_rooms.keys()))
-        spot = random.choice(hiding_rooms[room])
-    
-        print(f"{self.name} searches the {room} - {spot[0]}")
-    
-        if spot[2]:
-            print(f"{self.name} found a spoon! {self.name} WINS!!!")
-            return True
-        else:
-            print(f"{self.name} found nothing.")
-            return False
-    
-    # algorithm 2 - Andrew
+        return False    
+
+
     def set_skill(players, skills_list):
         """Gives each of the players a skill.
         The human picks whilst the computer is given a random skill.
@@ -296,8 +218,116 @@ class Player:
         selected_spot = input("Which spot do you select?\n").lower()
         return self.check_spot(hiding_rooms, room, selected_spot)
     
+
+class HumanPlayer(Player):
+    def swap_card (self, other):
+        """Manage human player’s turn in discarding one of their card
+        
+        Args: 
+            other (Player): the next player
+        
+        Side effects:
+            print player's current card deck
+            ask player what card to discard to the next player, 
+            delete the card from player’s card deck, 
+            add the card to the next player’s card deck
+        """
+        print(f"{self.name}'s current card deck: {self.cards}")
+        chosen_card = input("What card do you want to discard to the next" + 
+                            "player?\n")
+        for card in self.cards:
+            if card == chosen_card:
+                del self.cards[card]
+        other.cards.append(card)
+    
+    def search(self, hiding_rooms):
+        """Allows a player to determine whether a hiding spot has a spoon (True)
+        or not (False). If a spoon is found, they win and the game ends.
+        
+        Args:
+            hiding_rooms (dict): hiding rooms which each have lists of hiding
+            spots. Each hiding spot is a list that looks like this:
+            [spot_name (str), likelihood (int), has_spoon (bool)]
+        
+        Returns:
+            bool: True or False depending on whether there is a spoon hidden in 
+                that hiding spot
+            
+        Side Effects: 
+            Prompts user for inputs for selecting room and hiding spot.
+            Prints result of a search to the terminal (includes invalid)
+            input messages or success/failure messages
+        """
+        
+        print("Rooms:")
+        for room in hiding_rooms:
+            print(room)
+
+        searched_room = input("Where do you want to search?\n").lower()
+        
+        if searched_room not in hiding_rooms:
+            print("Invalid room.")
+            return False
+        
+        print("Hiding spots:")
+        for spot in hiding_rooms[searched_room]:
+            print(spot[0])
+        
+        selected_spot = input("Which spot do you want to search?\n").lower()
+        return self.check_spot(hiding_rooms, searched_room, selected_spot)
+    
+    
+class ComputerPlayer(Player):
+
+    def swap_card(self, other):
+        """Allows the computer to decide what card to discard in Spoons.
+        
+        Parameters:
+            other (Player/ComputerPlayer): other player 
+
+
+        Side Effects:
+            Removes the discarded card from cpu_hand
+            Adds the discarded card to the next_player_pile
+            print current card deck of the computer 
+        """
+        for i in range(len(self.cards)):
+            for j in range(i + 1, len(self.cards)):
+                if self.cards[i][:-1] == self.cards[j][:-1]:
+                    for card in self.cards:
+                        if card[:-1] != self.cards[i][:-1]:
+                            self.cards.remove(card)
+                            other.cards.append(card)
+                            print(f"{self.name}'s current card deck: " + 
+                                self.cards)
+    
+    def search(self, hiding_rooms):
+        """Control how the computer search for spoons
+        
+        Args:
+            hiding_rooms (dict): hiding rooms which each have lists of hiding
+            spots. Each hiding spot is a list that looks like this:
+            [spot_name (str), likelihood (int), has_spoon (bool)]
+        
+        Returns:
+            bool: True or False depending on whether there is a spoon hidden in 
+                that hiding spot
+        """
+        room = random.choice(list(hiding_rooms.keys()))
+        spot = random.choice(hiding_rooms[room])
+    
+        print(f"{self.name} searches the {room} - {spot[0]}")
+    
+        if spot[2]:
+            print(f"{self.name} found a spoon! {self.name} WINS!!!")
+            return True
+        else:
+            print(f"{self.name} found nothing.")
+            return False
+    
+    
 class Game:
-    """
+    """Class Representation of Game
     
     Attributes:
         hiding_rooms (dict): collection of hiding spots (list of tuples)
@@ -315,15 +345,12 @@ class Game:
     """
     
     def __init__(self, players, hiding_info):
-        card_suits = ["Heart", "Diamond", "Club", "Spade"]
-        number_card = ["A", "2", "3", "4", "5", "6", "7", "8", "9", 
-                       "10", "J", "Q", "K"]
-        card_deck = []
-        for suit in card_suits:
-            for number in number_card:
-                card = suit + " " + number
-                card_deck.append(card)
-        self.card_deck = card_deck
+        self.card_deck = ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", 
+                       "10H", "JH", "QH", "KH", "AD", "2D", "3D", "4D", "5D", 
+                       "6D", "7D", "8D", "9D", "10D", "JD", "QD", "KD", "AC", 
+                       "2C", "3C", "4C", "5C", "6C", "7C", "8C", "9C", "10C", 
+                       "JC", "QC", "KC", "AS", "2S", "3S", "4S", "5S", "6S", 
+                       "7S", "8S", "9S", "10S", "JS", "QS", "KS"]
         self.players = players
         self.hiding_info = hiding_info
         self.hiding_spots = None
@@ -333,9 +360,7 @@ class Game:
         self.json_to_dict()
         
     def json_to_dict(self):
-        """Converts json file instance variable to relevant dictionaries. 
-        
-        Author: Gosi
+        """Converts json file instance variable to relevant dictionaries.
         
         Techniques: 
         
@@ -348,12 +373,9 @@ class Game:
             self.hiding_rooms = dict(dict1['hiding_rooms'])
             self.hiding_spots = dict(dict1['hiding_spots'])
             
-    # algorithm #1 - Gosi
-    def set_hiding_spot(self, difficulty):
+    def set_diffculty_level(self, difficulty):
         """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
         difficulty. 
-        Author: Gosi
-        Editor: Anna
         
         Args:
             difficulty (str): value of 'easy', 'medium', or 'hard', that 
@@ -378,14 +400,12 @@ class Game:
                     hiding_spot[1] = random.randint(1, 3)
                 else:
                     return ValueError("Wrong Difficulty Level.")
+    
                 
     def hide_spoons(self):
-        from random import randint
         """Sets index two of of a hiding spot in the dictionary hiding rooms to 
         True if a spoon will be placed there. There will be number of 
         players - 1 spoons hidden in a given game most often. 
-
-        Primary Author: Gosi
         
         Techniques Used: 
         
@@ -396,8 +416,8 @@ class Game:
         all_rooms = self.hiding_rooms.values()
         all_hiding_spots = set()
         for room in all_rooms:
-            all_hiding_spots |= set(
-                (spot[0], spot[1], spot[2]) for spot in room)
+            all_hiding_spots |= set((spot[0], spot[1], spot[2]) for spot in 
+                                    room)
                         
         all_hiding_spots = list(all_hiding_spots)
         
@@ -408,12 +428,28 @@ class Game:
                     weighted_hiding_spots.append(spot)
         
         for spoon in range(self.num_spoons):
-            hide_spot = weighted_hiding_spots[
-                random.randint(0, len(weighted_hiding_spots)-1)][0]
+            hide_spot = weighted_hiding_spots[random.randint(0, 
+                            len(weighted_hiding_spots)-1)][0]
             room = self.hiding_spots[hide_spot]
             for key in self.hiding_rooms[room]:
                 if key[0] == hide_spot:
                     key[2] = True
+
+    def take_turn(self, player):
+        """Determines if a player is still trying for four of a kind,
+        or searching for spoons.
+        """
+        player_index = self.players.index(player)
+        if (player_index + 1) == len(self.players):
+            other = self.players[0]
+        else:
+            other = self.players[self.players.index(player) + 1]
+        if player.mode == "cards":
+            player.swap_card(other)
+            return player.check_four_of_a_kind()
+        elif player.mode == "spoons":
+            return player.search(self.hiding_rooms)
+        
             
     def __str__(self):
         remaining_spoons = 0
