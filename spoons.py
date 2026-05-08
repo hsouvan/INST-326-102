@@ -362,7 +362,7 @@ class Game:
     def json_to_dict(self):
         """Converts json file instance variable to relevant dictionaries.
         
-        Techniques: 
+        Primary Author: Gosi
         
         Side Effects: 
             Changes values of hiding_rooms and hiding_spots to the dictionaries
@@ -373,9 +373,11 @@ class Game:
             self.hiding_rooms = dict(dict1['hiding_rooms'])
             self.hiding_spots = dict(dict1['hiding_spots'])
             
-    def set_diffculty_level(self, difficulty):
+    def set_likelihood(self, difficulty):
         """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
         difficulty. 
+        
+        Primary Author: Gosi
         
         Args:
             difficulty (str): value of 'easy', 'medium', or 'hard', that 
@@ -386,7 +388,7 @@ class Game:
                 hiding rooms.
         
         Raises:
-            ValueError: if provided a wrong difficulty level
+            ValueError: if provided a invalid difficulty level
         """
         rooms = self.hiding_rooms.keys()
         
@@ -399,13 +401,15 @@ class Game:
                 elif(difficulty == "hard"): 
                     hiding_spot[1] = random.randint(1, 3)
                 else:
-                    return ValueError("Wrong Difficulty Level.")
+                    return ValueError("Invalid Difficulty Level.")
     
                 
     def hide_spoons(self):
         """Sets index two of of a hiding spot in the dictionary hiding rooms to 
         True if a spoon will be placed there. There will be number of 
         players - 1 spoons hidden in a given game most often. 
+        
+        Primary Author: Gosi
         
         Techniques Used: 
         
@@ -502,7 +506,7 @@ def main(filepath):
         cpu2 = Player('cpu2', True)
         
         game_state = Game([human, cpu1, cpu2], filepath)
-        game_state.set_hiding_spot('hard')
+        game_state.set_likelihood('hard')
         game_state.hide_spoons()
         
         
