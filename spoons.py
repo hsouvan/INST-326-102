@@ -56,6 +56,12 @@ class Player:
         card = random.choice(card_deck)
         self.cards.append(card)
         card_deck.remove(card)
+    
+    def trash_pile(self, card_deck):
+        """
+        """
+        raise NotImplementedError
+        
         
     def swap_card (self, other):
         """Manage human player’s turn in discarding one of their card
@@ -73,13 +79,13 @@ class Player:
             Once a player is confirmed to have four of a kind,
             they start checking for spoons.
         """
-        # ranks = [card.split(" ", 1)[1] for card in self.cards]
         ranks = [card[:-1] for card in self.cards]
-    
+
         for rank in ranks:
             if ranks.count(rank) == 4:
                 self.mode = "spoons"
-                print(f"{self.name} has 4 of a kind! They can now search for " +
+        if self.mode == "spoons":
+            print(f"{self.name} has 4 of a kind! They can now search for " +
                       "the spoon!")
 
     def search(self, hiding_rooms):
@@ -136,6 +142,13 @@ class HumanPlayer(Player):
                             "player?\n").upper()
         self.cards.remove(chosen_card)
         other.cards.append(chosen_card)
+        
+    def trash_pile(self, card_deck):
+        print(f"{self.name}'s current card deck: {self.cards}")
+        chosen_card = input("What card do you want to discard to the next " + 
+                            "player?\n").upper()
+        self.cards.remove(chosen_card)
+        card_deck.append(chosen_card)
     
     def search(self, hiding_rooms):
         """Allows a player to determine whether a hiding spot has a spoon (True)
@@ -273,6 +286,22 @@ class ComputerPlayer(Player):
         
         self.cards.remove(card_to_discard)
         other.cards.append(card_to_discard)
+        print(f"{self.name}'s current card deck: {self.cards}")
+    
+    def trash_pile(self, card_deck):
+        ranks = [card[:-1] for card in self.cards]
+        card_to_discard = None
+        
+        for card in self.cards:
+            if ranks.count(card[:-1]) < 2:
+                card_to_discard = card
+                break
+        
+        if card_to_discard == None:
+            card_to_discard = self.cards[0]
+        
+        self.cards.remove(card_to_discard)
+        card_deck.append(card_to_discard)
         print(f"{self.name}'s current card deck: {self.cards}")
     
     def search(self, hiding_rooms):
@@ -417,12 +446,16 @@ class Game:
         or searching for spoons.
         """
         player_index = self.players.index(player)
-        if (player_index + 1) == len(self.players):
-            other = self.players[0]
-        else:
-            other = self.players[self.players.index(player) + 1]
         if player.mode == "cards":
-            player.swap_card(other)
+            if player_index == 0:
+                player.draw_card(self.card_deck)
+                other = self.players[self.players.index(player) + 1]
+                player.swap_card(other)
+            elif (player_index + 1) == len(self.players):
+                player.trash_pile(self.card_deck)
+            else:
+                other = self.players[self.players.index(player) + 1]
+                player.swap_card(other)
             player.check_four_of_a_kind()
             return False
         elif player.mode == "spoons":
@@ -444,8 +477,8 @@ class Game:
         """
         win = False
         for player in self.players:
-            player.dealing(self.card_deck)
             player.set_skill(self.skills_list)
+            player.dealing(self.card_deck)
         turn = -1
         self.players[0].draw_card(self.card_deck)
         while not win:
