@@ -296,7 +296,7 @@ class ComputerPlayer(Player):
     
     
 class Game:
-    """Class Representation of Game
+    """Class Representation of Spoons
     
     Attributes:
         hiding_rooms (dict): collection of hiding spots (list of tuples)
@@ -431,13 +431,13 @@ class Game:
     #     for player in self.players:
     #         pass
 
-    # def play_search_round(self): 
-    #     """Players who have found 4 of a kind, or are the last to find 4 of a 
-    #     kind may search for spoons in the designated hiding spots.
-    #     """
+    def play_search_round(self): 
+        """Players who have found 4 of a kind, or are the last to find 4 of a 
+        kind may search for spoons in the designated hiding spots.
+        """
 
-    #         for player in self.players:
-    #             while(self.calc_spoons() > 0):
+            for player in self.players:
+                while(self.calc_spoons() > 0):
                     
         
     # def calc_spoons(self):
