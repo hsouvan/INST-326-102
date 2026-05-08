@@ -455,7 +455,15 @@ class Game:
         print("Game End!")           
         
             
-def main(filepath): 
+def main(filepath):
+    """
+    Prompts the user for their name and the difficulty they desire. Sets up the
+    player objects for the Game instance. It also runs the game through a Game 
+    instance.
+
+    Args:
+        filepath (str): _description_
+    """
     players = []
     player_name = input("What is your name? ").capitalize()
     difficulty = input("What level of difficulty do you want to play? ").lower()
