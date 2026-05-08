@@ -74,7 +74,8 @@ class Player:
             Once a player is confirmed to have four of a kind,
             they start checking for spoons.
         """
-        ranks = [card.split(" ", 1)[1] for card in self.cards]
+        # ranks = [card.split(" ", 1)[1] for card in self.cards]
+        ranks = [card[0] for card in self.cards]
     
         for rank in ranks:
             if ranks.count(rank) == 4:
@@ -136,7 +137,7 @@ class HumanPlayer(Player):
                             "player?\n")
         for card in self.cards:
             if card == chosen_card:
-                del self.cards[card]
+                self.cards.remove(card)
         other.cards.append(card)
     
     def search(self, hiding_rooms):
@@ -202,7 +203,7 @@ class HumanPlayer(Player):
             print(f"{i + 1}. {skill}")
             
         choice = int(input("Pick your skill: "))
-        self.skill = skills_list[choice]
+        self.skill = skills_list[choice - 1]
         skills_list.remove(self.skill)
         
     #SKILLS RELATED TO SEARCHING FOR SPOONS
@@ -329,7 +330,7 @@ class Game:
         self.hiding_rooms = None
         self.num_spoons = len(players) - 1
         self.json_to_dict()
-        self.skills_list = []
+        self.skills_list = ["oh shiny", "spoon compass"]
         
     def json_to_dict(self):
         """Converts json file instance variable to relevant dictionaries.
@@ -459,16 +460,15 @@ def main(filepath):
     
     while is_playing:
         player_name = input("What is your name? ")
-        human = Player(player_name)
-        cpu1 = Player('cpu1', True)
-        cpu2 = Player('cpu2', True)
+        human = HumanPlayer(player_name)
+        cpu1 = ComputerPlayer('cpu1')
+        cpu2 = ComputerPlayer('cpu2')
         
         game_state = Game([human, cpu1, cpu2], filepath)
         game_state.set_likelihood('hard')
         game_state.hide_spoons()
         
-        
-        print(game_state)
+        game_state.play()
 
         keep_playing = input("Would you like to play again? Y/N: ")
         is_playing = True if keep_playing == 'Y' else False
