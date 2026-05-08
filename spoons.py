@@ -415,7 +415,29 @@ class Game:
                 if key[0] == hide_spot:
                     key[2] = True
             
-    def __str__(self):
+    #running the turn system
+    def play_card_round(self):
+        """All players take their turns in the card game. If all players have
+        found their 4 of a kind, no card round will take place.
+        """
+        
+        
+        for player in self.players:
+            pass
+
+    def play_search_round(self): 
+        """Players who have found 4 of a kind, or are the last to find 4 of a 
+        kind may search for spoons in the designated hiding spots.
+        """
+
+            for player in self.players:
+                while(self.calc_spoons() > 0):
+                    
+        
+    def calc_spoons(self):
+        """Counts the remaining spoons. If no spoons are remaining, the game
+        ends.
+        """
         remaining_spoons = 0
         for value in self.hiding_rooms.values():
             for spot in value:
@@ -425,8 +447,10 @@ class Game:
                     break
             if remaining_spoons >= self.num_spoons:
                     break
-                
-        return(f"There is/are {remaining_spoons} spoon(s) left!")
+        return remaining_spoons
+    
+    def __str__(self):
+        return(f"There is/are {self.calc_spoons()} spoon(s) left!")
         
     def __repr__(self):
         return(f"Here are the hiding spot details: {self.hiding_rooms}")
@@ -444,6 +468,7 @@ def main(filepath):
         game_state = Game([human, cpu1, cpu2], filepath)
         game_state.set_hiding_spot('hard')
         game_state.hide_spoons()
+        
         
         print(game_state)
 
