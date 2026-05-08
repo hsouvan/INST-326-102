@@ -429,9 +429,9 @@ class Game:
         """Players who have found 4 of a kind, or are the last to find 4 of a 
         kind may search for spoons in the designated hiding spots.
         """
-
-            for player in self.players:
-                while(self.calc_spoons() > 0):
+        for player in self.players:
+            while(self.calc_spoons() > 0):
+                pass
                     
         
     def calc_spoons(self):
