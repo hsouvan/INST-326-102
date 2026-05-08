@@ -1,5 +1,33 @@
 # Game Project: Spoons Card Game
 
+
+# File Breakdown #
+
+The .json file _hiding_location_info_default.json_ is an example of the json the user would provide, complete with the rooms and hiding spots in which spoons can be hidden. This file is accessed in our code to get the dictionaries with the json file. This file is also inputted throw the terminal.
+
+The _mainfunc_ file is where we run our main function where we create and use the classes the have all the Game and Player functionality. 
+
+The _spoons.py_ file is where we create our Game and Player classes that allow us to run the Game. The Player class focuses on player abilities like taking turns and searching for spoons, while the Game sets up the more overarching aspects like hiding the spoons and fixing the setting of the game.
+
+
+
+| Method/function  | Primary Author | Techniques Demonstrated |
+|------------------|----------------|-------------------------|
+| set_likelihood() | Gosi Alilonu   |                         |
+| hide_spoons()    | Gosi Alilonu   |                         |
+| calc_spoons()    | Gosi Alilonu   |                         |
+| json_to_dict()   | Gosi Alilonu   | json.load(), with()     |
+| __str__()        |                |                         |
+| __repr__()       |                |                         |
+| main()           |                |                         |
+|                  |                |                         |
+|                  |                |                         |
+
+Works Cited
+
+W3schools.com. W3Schools Online Web Tutorials. (n.d.). https://www.w3schools.com/js/js_json_syntax.asp.
+
+
 Card Number:\
 AH - Ace of Heart\
 2H - 2 of Heart\
