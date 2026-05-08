@@ -14,7 +14,7 @@ class Player:
             default is False / human player
     """
     
-    def __init__(self, name, is_cpu = False):
+    def __init__(self, name):
         """Create a player
         
         Args:
@@ -24,7 +24,6 @@ class Player:
             initialize the attributes"""
         self.name = name
         self.cards = []
-        self.skill = None
         self.mode = "cards"
     
     def dealing(self, card_deck):
@@ -44,7 +43,7 @@ class Player:
         print(f"{self.name}'s card deck: {self.cards}")
     
     def draw_card(self, card_deck):
-        """Draws a card from the deck (random) and adding to player's hand
+        """Draws a card from the deck (random) and add to player's hand
         
         Args:
             card_deck (list): pile of cards remaining
@@ -68,8 +67,6 @@ class Player:
         """
         raise NotImplementedError
         
-        
-    # GAME STATE MANAGEMENT
     def check_four_of_a_kind(self):
         """Checks for four of a kind in a player's hand.
         
@@ -82,38 +79,9 @@ class Player:
         for rank in ranks:
             if ranks.count(rank) == 4:
                 self.mode = "spoons"
-                print(f"{self.name} has 4 of a kind, and wins the game!")
-                return True
-        return False
-    
-    
-    
-    # def card_turn(self, game):
-    #     if self.is_cpu:
-    #         self.draw_card(game.card_deck)
-    #     else:
-    #         # human player
-    #         pass
-    
-    
-    # def take_turn(self, other, hiding_rooms):
-    #     """Determines if a player is still trying for four of a kind,
-    #     or searching for spoons.
-    #     """
-    #     if self.mode == "cards":
-    #         self.self.swap_card(other)
-    #         self.check_four_of_a_kind()
-    #     elif self.mode == "spoons":
-    #         self.search(hiding_rooms)
-    
-    
-    # def spoon_turn(self, game):
-    #     if self.is_cpu:
-    #         self.cpu_search(game.hiding_rooms)
-    #     else:
-    #         self.search(game.hiding_rooms)
-            
-    #SEARCHING FOR SPOONS
+                print(f"{self.name} has 4 of a kind! They can now search for " +
+                      "the spoon!")
+
     def search(self, hiding_rooms):
         """Allows a player to determine whether a hiding spot has a spoon (True)
         or not (False). If a spoon is found, they win and the game ends.
@@ -129,97 +97,28 @@ class Player:
         """
         raise NotImplementedError
     
-    #separated this portion of the search method for reusability
-    def check_spot(self, hiding_rooms, room, selected_spot):
-        for spot in hiding_rooms[room]:
-            if spot[0] == selected_spot:
-                if spot[2]:
-                    print(f"A spoon has been found! {self.name} WINS!!!")
-                    return True
-                else:
-                    print("No spoon found.")
-                    return False
-                
-        print("Invalid hiding spot.")
-        return False    
-
-
-    def set_skill(players, skills_list):
-        """Gives each of the players a skill.
-        The human picks whilst the computer is given a random skill.
-        No two players share the same skill.
-        
-        Args:
-            cpu (str): name of the computer player
-            player (str): name of the human player
-            skills_list (list): list of premade skills
-        Side effects:
-            Asks what skill the player wants to choose from.
-        Returns:
-            dict: mapping of the player and their skill    
+    def set_skill(self, skills_list):
         """
+        """
+        pass
         
-        available_skills = skills_list.copy()
-        
-        print("Available skills:")
-        for i, skill in enumerate(skills_list):
-            print(f"{i + 1}. {skill}")
-            
-        choice = int(input("Pick your skill: "))
-        players[0].skill = skills_list[choice - 1]
-        available_skills.remove(players[0].skill)
-        
-        for player in players[1:]:
-            skill = random.choice(available_skills)
-            player.skill = skill
-            available_skills.remove(skill)
-        
-    #SKILLS RELATED TO SEARCHING FOR SPOONS
-    #SPOON COMPASS
-    def spoon_compass(self, hiding_rooms):
-        rooms_with_spoons = []
-        
-        for room in hiding_rooms:
-            for spot in hiding_rooms[room]:
-                if spot[2]:
-                    rooms_with_spoons.append(room)
-        
-        rooms_with_spoons = list(set(rooms_with_spoons))
-        
-        if len(rooms_with_spoons) == 1:
-            print(f"The compass strongly points towards the {rooms_with_spoons}!")
-            return rooms_with_spoons[0]
-        else:
-            print("The compass is spinning its pointer between two rooms!")
-            print(f"It points to the following rooms: {rooms_with_spoons}")
-            return rooms_with_spoons
-    
-    #OH SHINY!
-    def oh_shiny(self, hiding_rooms):
-        room = input("Pick a room to scan:\n").lower()
-        
-        if room not in hiding_rooms:
-            print("Invalid room")
-            return False
-        
-        spoon_found = any(spot[2] for spot in hiding_rooms[room])
-        
-        if not spoon_found:
-            print(f"The room has no spoons in the {room}")
-            return False
-        
-        print(f"Your scan revealed a spoon in the {room}!")
-        #now that a spoon was scanned in selected room, follow-up
-        #in the same turn for searching a spot
-        print("Now you can search for a spot the spoon might be in:")
-        for spot in hiding_rooms[room]:
-            print(spot[0])
-        
-        selected_spot = input("Which spot do you select?\n").lower()
-        return self.check_spot(hiding_rooms, room, selected_spot)
     
 
 class HumanPlayer(Player):
+    
+    def __init__(self, name):
+        """Create a player
+        
+        Args:
+            name (str): name of the player
+        
+        Side effects:
+            initialize the attributes"""
+        self.name = name
+        self.cards = []
+        self.skill = None
+        self.mode = "cards"
+    
     def swap_card (self, other):
         """Manage human player’s turn in discarding one of their card
         
@@ -275,6 +174,79 @@ class HumanPlayer(Player):
         
         selected_spot = input("Which spot do you want to search?\n").lower()
         return self.check_spot(hiding_rooms, searched_room, selected_spot)
+
+    #separated this portion of the search method for reusability
+    def check_spot(self, hiding_rooms, room, selected_spot):
+        for spot in hiding_rooms[room]:
+            if spot[0] == selected_spot:
+                if spot[2]:
+                    print(f"A spoon has been found! {self.name} WINS!!!")
+                    return True
+                else:
+                    print("No spoon found.")
+                    return False         
+        print("Invalid hiding spot.")
+        return False
+
+    def set_skill(self, skills_list):
+        """Give player a skill
+        
+        Args:
+            skills_list (list): list of premade skills
+            
+        Side effects:
+            Asks what skill the player wants to choose from.   
+        """
+        print("Available skills:")
+        for i, skill in enumerate(skills_list):
+            print(f"{i + 1}. {skill}")
+            
+        choice = int(input("Pick your skill: "))
+        self.skill = skills_list[choice]
+        skills_list.remove(self.skill)
+        
+    #SKILLS RELATED TO SEARCHING FOR SPOONS
+    #SPOON COMPASS
+    def spoon_compass(self, hiding_rooms):
+        rooms_with_spoons = []
+        
+        for room in hiding_rooms:
+            for spot in hiding_rooms[room]:
+                if spot[2]:
+                    rooms_with_spoons.append(room)
+        
+        rooms_with_spoons = list(set(rooms_with_spoons))
+        
+        if len(rooms_with_spoons) == 1:
+            print(f"The compass strongly points towards the {rooms_with_spoons}"
+                  + "!")
+        else:
+            print("The compass is spinning its pointer between two rooms!")
+            print(f"It points to the following rooms: {rooms_with_spoons}")
+    
+    #OH SHINY!
+    def oh_shiny(self, hiding_rooms):
+        room = input("Pick a room to scan:\n").lower()
+        
+        if room not in hiding_rooms:
+            print("Invalid room")
+            return False
+        
+        spoon_found = any(spot[2] for spot in hiding_rooms[room])
+        
+        if not spoon_found:
+            print(f"The room has no spoons in the {room}")
+            return False
+        
+        print(f"Your scan revealed a spoon in the {room}!")
+        #now that a spoon was scanned in selected room, follow-up
+        #in the same turn for searching a spot
+        print("Now you can search for a spot the spoon might be in:")
+        for spot in hiding_rooms[room]:
+            print(spot[0])
+        
+        selected_spot = input("Which spot do you select?\n").lower()
+        return self.check_spot(hiding_rooms, room, selected_spot)
     
     
 class ComputerPlayer(Player):
@@ -283,12 +255,12 @@ class ComputerPlayer(Player):
         """Allows the computer to decide what card to discard in Spoons.
         
         Parameters:
-            other (Player/ComputerPlayer): other player 
+            other (Player): the next player 
 
 
         Side Effects:
             Removes the discarded card from cpu_hand
-            Adds the discarded card to the next_player_pile
+            Adds the discarded card to the next player
             print current card deck of the computer 
         """
         for i in range(len(self.cards)):
@@ -356,8 +328,8 @@ class Game:
         self.hiding_spots = None
         self.hiding_rooms = None
         self.num_spoons = len(players) - 1
-        
         self.json_to_dict()
+        self.skills_list = []
         
     def json_to_dict(self):
         """Converts json file instance variable to relevant dictionaries.
@@ -439,7 +411,7 @@ class Game:
                 if key[0] == hide_spot:
                     key[2] = True
 
-    def take_turn(self, player):
+    def turn(self, player):
         """Determines if a player is still trying for four of a kind,
         or searching for spoons.
         """
@@ -450,52 +422,36 @@ class Game:
             other = self.players[self.players.index(player) + 1]
         if player.mode == "cards":
             player.swap_card(other)
-            return player.check_four_of_a_kind()
+            player.check_four_of_a_kind()
+            return False
         elif player.mode == "spoons":
-            return player.search(self.hiding_rooms)
-        
-            
-    #running the turn system
-    def play_card_round(self):
-        """All players take their turns in the card game. If all players have
-        found their 4 of a kind, no card round will take place.
-        
-        Primary Author: Gosi
-        """
-        
-        
-        for player in self.players:
-            pass
-
-    def play_search_round(self): 
-        """Players who have found 4 of a kind, or are the last to find 4 of a 
-        kind may search for spoons in the designated hiding spots.
-        """
-        for player in self.players:
-            while(self.calc_spoons() > 0):
-                pass
-                    
-        
-    def calc_spoons(self):
-        """Counts the remaining spoons. If no spoons are remaining, the game
-        ends.
-        """
-        remaining_spoons = 0
-        for value in self.hiding_rooms.values():
-            for spot in value:
-                if spot[2]:
-                    remaining_spoons += 1
-                if remaining_spoons >= self.num_spoons:
-                    break
-            if remaining_spoons >= self.num_spoons:
-                    break
-        return remaining_spoons
+            if isinstance(player, HumanPlayer):
+                skill_use = input("Do you want to use your skill? (y/n) ")
+                if skill_use.ower() == "y":
+                    if player.skill == "Name":
+                        player.spoon_compass(self.hiding_rooms)
+                        return False
+                    elif player.skill == "Name":
+                        return player.oh_shiny(self.hiding_rooms)
+                else:
+                    return player.search(self.hiding_rooms)
+            else:    
+                return player.search(self.hiding_rooms)   
     
-    def __str__(self):
-        return(f"There is/are {self.calc_spoons()} spoon(s) left!")
-        
-    def __repr__(self):
-        return(f"Here are the hiding spot details: {self.hiding_rooms}")
+    def play(self):
+        """Play the Game
+        """
+        win = False
+        for player in self.players:
+            player.dealing(self.card_deck)
+            player.set_skill(self.skills_list)
+        turn = -1
+        player = self.players[0].draw_card(self.card_deck)
+        while not win:
+            turn += 1
+            player = self.players[turn % len(self.players)]
+            win = self.turn(player)
+        print("Game End!")           
         
             
 def main(filepath): 
