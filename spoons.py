@@ -325,14 +325,13 @@ class Game:
                        "JC", "QC", "KC", "AS", "2S", "3S", "4S", "5S", "6S", 
                        "7S", "8S", "9S", "10S", "JS", "QS", "KS"]
         self.players = players
-        self.hiding_info = hiding_info
         self.hiding_spots = None
         self.hiding_rooms = None
         self.num_spoons = len(players) - 1
-        self.json_to_dict()
+        self.json_to_dict(hiding_info)
         self.skills_list = ["oh shiny", "spoon compass"]
         
-    def json_to_dict(self):
+    def json_to_dict(self, hiding_info):
         """Converts json file instance variable to relevant dictionaries.
         
         Primary Author: Gosi
@@ -343,7 +342,7 @@ class Game:
             Changes values of hiding_rooms and hiding_spots to the dictionaries
             in the json file
         """
-        with open(self.hiding_info, 'r', encoding = 'utf-8') as reader:
+        with open(hiding_info, 'r', encoding = 'utf-8') as reader:
             dict1 = dict(json.load(reader))
             self.hiding_rooms = dict(dict1['hiding_rooms'])
             self.hiding_spots = dict(dict1['hiding_spots'])
@@ -456,22 +455,18 @@ class Game:
         
             
 def main(filepath): 
-    is_playing = True
+    players = []
+    player_name = input("What is your name? ").capitalize()
+    difficulty = input("What level of difficulty do you want to play? ").lower()
+    players.append(HumanPlayer(player_name))
+    players.append(ComputerPlayer('Computer1'))
+    players.append(ComputerPlayer('Computer2'))
     
-    while is_playing:
-        player_name = input("What is your name? ")
-        human = HumanPlayer(player_name)
-        cpu1 = ComputerPlayer('cpu1')
-        cpu2 = ComputerPlayer('cpu2')
-        
-        game_state = Game([human, cpu1, cpu2], filepath)
-        game_state.set_likelihood('hard')
-        game_state.hide_spoons()
-        
-        game_state.play()
-
-        keep_playing = input("Would you like to play again? Y/N: ")
-        is_playing = True if keep_playing == 'Y' else False
+    game = Game(players, filepath)
+    game.set_likelihood(difficulty)
+    game.hide_spoons()
+    
+    game.play()
         
     
 def parse_args(arglist):
