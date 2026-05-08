@@ -327,7 +327,7 @@ class ComputerPlayer(Player):
     
     
 class Game:
-    """Class Representation of Game
+    """Class Representation of Spoons
     
     Attributes:
         hiding_rooms (dict): collection of hiding spots (list of tuples)
