@@ -1,6 +1,7 @@
 # python file for the game
 import random
 import json
+from argparse import ArgumentParser
 
 class Player:
     """Representation of player
@@ -79,7 +80,33 @@ class Player:
                 del self.cards[card]
         other.cards.append(card)
         
-    
+    # algorithm 4 - Hunter
+    def cpu_discard(cpu, next_player, cpu_hand, next_player_pile):
+        """
+        Allows the computer to decide what card to discard in Spoons.
+        
+        Parameters:
+            cpu (str): Name of the computer player
+            next_player (str): Name of the next player
+            cpu_hand (list of str): The computer's current hand
+            next_player_pile (list of str): The next players trash pile
+
+        Returns:
+            str or None: The card that was discarded, or None
+
+        Side Effects:
+            Removes the discarded card from cpu_hand
+            Adds the discarded card to the next_player_pile
+        """
+        for i in range(len(cpu_hand)):
+            for j in range(i + 1, len(cpu_hand)):
+                if cpu_hand[i][:-1] == cpu_hand[j][:-1]:
+                    for card in cpu_hand:
+                        if card[:-1] != cpu_hand[i][:-1]:
+                            cpu_hand.remove(card)
+                            next_player_pile.append(card)
+                            return card
+        return None
         
     # GAME STATE MANAGEMENT
     def check_four_of_a_kind(self):
@@ -191,7 +218,37 @@ class Player:
             print(f"{self.name} found nothing.")
             return False
     
+    # algorithm 2 - Andrew
+def set_skill(players, skills_list):
+    """Gives each of the players a skill.
+    The human picks whilst the computer is given a random skill.
+    No two players share the same skill.
     
+    Args:
+        cpu (str): name of the computer player
+        player (str): name of the human player
+        skills_list (list): list of premade skills
+    Side effects:
+        Asks what skill the player wants to choose from.
+    Returns:
+        dict: mapping of the player and their skill    
+    """
+    
+    available_skills = skills_list.copy()
+    
+    print("Available skills:")
+    for i, skill in enumerate(skills_list):
+        print(f"{i + 1}. {skill}")
+        
+    choice = int(input("Pick your skill: "))
+    players[0].skill = skills_list[choice - 1]
+    available_skills.remove(players[0].skill)
+    
+    for player in players[1:]:
+        skill = random.choice(available_skills)
+        player.skill = skill
+        available_skills.remove(skill)
+        
     #SKILLS RELATED TO SEARCHING FOR SPOONS
     #SPOON COMPASS
     def spoon_compass(self, hiding_rooms):
@@ -281,6 +338,7 @@ class Game:
             self.hiding_rooms = dict1['hiding_rooms']
             self.hiding_spots = dict1['hiding_spots']
             
+    # algorithm #1 - Gosi
     def set_hiding_spot(self, difficulty):
         """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
         difficulty. 
@@ -351,66 +409,16 @@ class Game:
                 random.randint(0, len(weighted_hiding_spots))]
             hiding_rooms[hiding_spots[hide_spot[0]]][hide_spot[0]][2] = True
             
-      
-# algorithm 2 - Andrew
-def set_skill(players, skills_list):
-    """Gives each of the players a skill.
-    The human picks whilst the computer is given a random skill.
-    No two players share the same skill.
+def main(): 
+    is_playing = True
     
-    Args:
-        cpu (str): name of the computer player
-        player (str): name of the human player
-        skills_list (list): list of premade skills
-    Side effects:
-        Asks what skill the player wants to choose from.
-    Returns:
-        dict: mapping of the player and their skill    
-    """
-    
-    available_skills = skills_list.copy()
-    
-    print("Available skills:")
-    for i, skill in enumerate(skills_list):
-        print(f"{i + 1}. {skill}")
+    while is_playing:
+        player_name = input("What is your name? ")
         
-    choice = int(input("Pick your skill: "))
-    players[0].skill = skills_list[choice - 1]
-    available_skills.remove(players[0].skill)
     
-    for player in players[1:]:
-        skill = random.choice(available_skills)
-        player.skill = skill
-        available_skills.remove(skill)
-        
-        
-
-    
-
-# algorithm 4 - Hunter
-def cpu_discard(cpu, next_player, cpu_hand, next_player_pile):
-    """
-    Allows the computer to decide what card to discard in Spoons.
-    
-    Parameters:
-        cpu (str): Name of the computer player
-        next_player (str): Name of the next player
-        cpu_hand (list of str): The computer's current hand
-        next_player_pile (list of str): The next players trash pile
-
-    Returns:
-        str or None: The card that was discarded, or None
-
-    Side Effects:
-        Removes the discarded card from cpu_hand
-        Adds the discarded card to the next_player_pile
-    """
-    for i in range(len(cpu_hand)):
-        for j in range(i + 1, len(cpu_hand)):
-            if cpu_hand[i][:-1] == cpu_hand[j][:-1]:
-                for card in cpu_hand:
-                    if card[:-1] != cpu_hand[i][:-1]:
-                        cpu_hand.remove(card)
-                        next_player_pile.append(card)
-                        return card
-    return None
+def parse_args(arglist):
+    """Reads in filepath to json file of hiding spot information with hiding 
+    room and hiding spot dictionaries"""
+if __name__ == "__main__":
+    args
+    main()
