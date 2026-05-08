@@ -1,5 +1,6 @@
 # python file for the game
 import random
+import json
 
 class Player:
     """Representation of player
@@ -243,9 +244,13 @@ class Game:
             where the spoons may be hidden, containing the name of the 
             hiding spot and its likelihood value, rooms do not have 
             likelihoods. All hiding spots musthave unique names.
+        hiding_spots (dict): The keys are all possible hiding spots, and the 
+            values are the rooms in which they are located 
+        hiding_info (str): name of the json file in which the hiding spot and 
+            hiding room dictionaries are located
     """
     
-    def __init__(self, players):
+    def __init__(self, players, hiding_info):
         card_suits = ["Heart", "Diamond", "Club", "Spade"]
         number_card = ["A", "2", "3", "4", "5", "6", "7", "8", "9", 
                        "10", "J", "Q", "K"]
@@ -256,22 +261,26 @@ class Game:
                 card_deck.append(card)
         self.card_deck = card_deck
         self.players = players
-        self.hiding_rooms = {
-            "Kitchen": [
-                ["drawer", 0, False], 
-                ["cabinet", 0, False], 
-                ["sink", 0, False]], 
-            "Living Room": [
-                ["couch", 0, False], 
-                ["tv stand", 0, False], 
-                ["bookshelf", 0, False]], 
-            "Bedroom": [
-                ["pillow", 0, False], 
-                ["closet", 0, False], 
-                ["dresser", 0, False]]
-            }
+        self.hiding_info = hiding_info
+        self.hiding_spots = None
+        self.hiding_rooms = None
         
+    def json_to_dict(self):
+        """Converts json file instance variable to relevant dictionaries. 
         
+        Author: Gosi
+        
+        Techniques: 
+        
+        Side Effects: 
+            Changes values of hiding_rooms and hiding_spots to the dictionaries
+            in the json file
+        """
+        with open(self.hiding_info, 'r', encoding = 'utf-8') as reader:
+            dict1 = dict(json.load(reader))
+            self.hiding_rooms = dict1['hiding_rooms']
+            self.hiding_spots = dict1['hiding_spots']
+            
     def set_hiding_spot(self, difficulty):
         """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
         difficulty. 
@@ -285,7 +294,9 @@ class Game:
         Side effects: 
             Changes the likelihood value of hiding spots in the dictionary of 
                 hiding rooms.
-            return ValueError if provided a wrong difficulty level
+        
+        Raises:
+            ValueError: if provided a wrong difficulty level
         """
         rooms = self.hiding_rooms.keys()
         
@@ -299,66 +310,48 @@ class Game:
                     hiding_spot[1] = random.randint(1, 3)
                 else:
                     return ValueError("Wrong Difficulty Level.")
-            
-            
-    
+                
+    def hide_spoons(hiding_rooms, hiding_spots, num_spoons):
+        from random import randint
+        """Sets index two of of a hiding spot in the dictionary hiding rooms to True
+        if a spoon will be placed there. There will be number of players - 1 spoons
+        hidden in a given game. To ensure proper randomization, rooms w
 
-
-# algorithm #1 - Gosi
-"""
-may not need hiding_rooms parameter if we place hiding methods in the Game class 
-and make hiding_rooms a variable upon intialization
-
-if in Game class, add randint import at beginning of game class 
-"""
-
-
-"""
-may not need hiding_rooms parameter if we place hiding methods in the Game class 
-and make hiding_rooms a variable upon intialization, same with hiding spots
-
-if in Game class, add randint import at beginning of game class 
-"""
-def hide_spoons(hiding_rooms, hiding_spots, num_spoons):
-    from random import randint
-    """Sets index two of of a hiding spot in the dictionary hiding rooms to True
-    if a spoon will be placed there. There will be number of players - 1 spoons
-    hidden in a given game. To ensure proper randomization, rooms w
-
-    Primary Author: Gosi
-    
-    Techniques Used: 
-    
-    Args: 
-        hiding_rooms (dict): collection of hiding spots (list of tuples) where 
-        the spoons may be hidden, containing the name of the hiding spot and its
-        integer likelihood value, its boolean has_spoon value (rooms do not have
-        likelihoods)
-        hiding_spots(dict): complete key of all the hiding spots and their rooms
-        num_players: an integer representing the number of spoons to be hidden
+        Primary Author: Gosi
         
-    
-    Side Effects: 
-        Changes the value of hiding_spot[2] where hiding spot is a 
-        value in hiding rooms. True means a spoon is hidden there.
-    """
-    all_rooms = hiding_rooms.values()
-    all_hiding_spots = set()
-    for room in all_rooms:
-        all_hiding_spots = set(room) | all_hiding_spots
-    all_hiding_spots = list(all_hiding_spots)
-    
-    weighted_hiding_spots = all_hiding_spots.copy()
-    for spot in all_hiding_spots:
-        if spot[2] > 1:
-            for likelihood in range(spot[2] - 1):
-                weighted_hiding_spots.append(spot)
-    
-    for spoon in range(num_spoons):
-        hide_spot = weighted_hiding_spots[
-            randint(0, len(weighted_hiding_spots))]
-        hiding_rooms[hiding_spots[hide_spot[0]]][hide_spot[0]][2] = True
+        Techniques Used: 
         
+        Args: 
+            hiding_rooms (dict): collection of hiding spots (list of tuples) where 
+            the spoons may be hidden, containing the name of the hiding spot and its
+            integer likelihood value, its boolean has_spoon value (rooms do not have
+            likelihoods)
+            hiding_spots(dict): complete key of all the hiding spots and their rooms
+            num_players: an integer representing the number of spoons to be hidden
+            
+        
+        Side Effects: 
+            Changes the value of hiding_spot[2] where hiding spot is a 
+            value in hiding rooms. True means a spoon is hidden there.
+        """
+        all_rooms = hiding_rooms.values()
+        all_hiding_spots = set()
+        for room in all_rooms:
+            all_hiding_spots = set(room) | all_hiding_spots
+        all_hiding_spots = list(all_hiding_spots)
+        
+        weighted_hiding_spots = all_hiding_spots.copy()
+        for spot in all_hiding_spots:
+            if spot[2] > 1:
+                for likelihood in range(spot[2] - 1):
+                    weighted_hiding_spots.append(spot)
+        
+        for spoon in range(num_spoons):
+            hide_spot = weighted_hiding_spots[
+                random.randint(0, len(weighted_hiding_spots))]
+            hiding_rooms[hiding_spots[hide_spot[0]]][hide_spot[0]][2] = True
+            
+      
 # algorithm 2 - Andrew
 def set_skill(players, skills_list):
     """Gives each of the players a skill.
@@ -374,7 +367,6 @@ def set_skill(players, skills_list):
     Returns:
         dict: mapping of the player and their skill    
     """
-    import random
     
     available_skills = skills_list.copy()
     

@@ -24,7 +24,7 @@
         ]
     },
 
-    "hiding_spots_key" : {
+    "hiding_spots" : {
         "drawer" : "kitchen",
         "cupboard" : "kitchen",
         "microwave" : "kitchen",
