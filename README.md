@@ -1,2 +1,55 @@
 # Game Project: Spoons Card Game
-Group Project for INST326
+
+Card Number:
+AH - Ace of Heart
+2H - 2 of Heart
+3H - 3 of Heart
+4H - 4 of Heart
+5H - 5 of Heart
+6H - 6 of Heart
+7H - 7 of Heart
+8H - 8 of Heart
+9H - 9 of Heart
+10H - 10 of Heart
+JH - Joker of Heart
+QH - Queen of Heart
+KH - King of Heart
+AD - Ace of Diamond
+2D - 2 of Diamond
+3D - 3 of Diamond
+4D - 4 of Diamond
+5D - 5 of Diamond
+6D - 6 of Diamond
+7D - 7 of Diamond
+8D - 8 of Diamond
+9D - 9 of Diamond
+10D - 10 of Diamond
+JD - Joker of Diamond
+QD - Queen of Diamond
+KD - King of Diamond
+AC - Ace of Club
+2C - 2 of Club
+3C - 3 of Club
+4C - 4 of Club
+5C - 5 of Club
+6C - 6 of Club
+7C - 7 of Club
+8C - 8 of Club
+9C - 9 of Club
+10C - 10 of Club
+JC - Joker of Club
+QC - Queen of Club
+KC - King of Club
+AS - Ace of Spade
+2S - 2 of Spade
+3S - 3 of Spade
+4S - 4 of Spade
+5S - 5 of Spade
+6S - 6 of Spade
+7S - 7 of Spade
+8S - 8 of Spade
+9S - 9 of Spade
+10S - 10 of Spade
+JS - Joker of Spade
+QS - Queen of Spade
+KS - King of Spade
