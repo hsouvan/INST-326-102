@@ -56,7 +56,6 @@ class Player:
         card = random.choice(card_deck)
         self.cards.append(card)
         card_deck.remove(card)
-        print(self.cards)
         
     def swap_card (self, other):
         """Manage human player’s turn in discarding one of their card
@@ -75,7 +74,7 @@ class Player:
             they start checking for spoons.
         """
         # ranks = [card.split(" ", 1)[1] for card in self.cards]
-        ranks = [card[0] for card in self.cards]
+        ranks = [card[:-1] for card in self.cards]
     
         for rank in ranks:
             if ranks.count(rank) == 4:
@@ -133,12 +132,10 @@ class HumanPlayer(Player):
             add the card to the next player’s card deck
         """
         print(f"{self.name}'s current card deck: {self.cards}")
-        chosen_card = input("What card do you want to discard to the next" + 
-                            "player?\n")
-        for card in self.cards:
-            if card == chosen_card:
-                self.cards.remove(card)
-        other.cards.append(card)
+        chosen_card = input("What card do you want to discard to the next " + 
+                            "player?\n").upper()
+        self.cards.remove(chosen_card)
+        other.cards.append(chosen_card)
     
     def search(self, hiding_rooms):
         """Allows a player to determine whether a hiding spot has a spoon (True)
@@ -202,8 +199,7 @@ class HumanPlayer(Player):
         for i, skill in enumerate(skills_list):
             print(f"{i + 1}. {skill}")
             
-        choice = int(input("Pick your skill: "))
-        self.skill = skills_list[choice - 1]
+        self.skill = input("Pick your skill (enter the name): ").lower()
         skills_list.remove(self.skill)
         
     #SKILLS RELATED TO SEARCHING FOR SPOONS
@@ -264,15 +260,20 @@ class ComputerPlayer(Player):
             Adds the discarded card to the next player
             print current card deck of the computer 
         """
-        for i in range(len(self.cards)):
-            for j in range(i + 1, len(self.cards)):
-                if self.cards[i][:-1] == self.cards[j][:-1]:
-                    for card in self.cards:
-                        if card[:-1] != self.cards[i][:-1]:
-                            self.cards.remove(card)
-                            other.cards.append(card)
-                            print(f"{self.name}'s current card deck: " + 
-                                self.cards)
+        ranks = [card[:-1] for card in self.cards]
+        card_to_discard = None
+        
+        for card in self.cards:
+            if ranks.count(card[:-1]) < 2:
+                card_to_discard = card
+                break
+        
+        if card_to_discard == None:
+            card_to_discard = self.cards[0]
+        
+        self.cards.remove(card_to_discard)
+        other.cards.append(card_to_discard)
+        print(f"{self.name}'s current card deck: {self.cards}")
     
     def search(self, hiding_rooms):
         """Control how the computer search for spoons
@@ -427,11 +428,11 @@ class Game:
         elif player.mode == "spoons":
             if isinstance(player, HumanPlayer):
                 skill_use = input("Do you want to use your skill? (y/n) ")
-                if skill_use.ower() == "y":
-                    if player.skill == "Name":
+                if skill_use.lower() == "y":
+                    if player.skill == "spoon compass":
                         player.spoon_compass(self.hiding_rooms)
                         return False
-                    elif player.skill == "Name":
+                    elif player.skill == "oh shiny":
                         return player.oh_shiny(self.hiding_rooms)
                 else:
                     return player.search(self.hiding_rooms)
@@ -446,7 +447,7 @@ class Game:
             player.dealing(self.card_deck)
             player.set_skill(self.skills_list)
         turn = -1
-        player = self.players[0].draw_card(self.card_deck)
+        self.players[0].draw_card(self.card_deck)
         while not win:
             turn += 1
             player = self.players[turn % len(self.players)]
@@ -485,3 +486,5 @@ def parse_args(arglist):
 if __name__ == "__main__":
     args = parse_args(argv[1:])
     main(args.filepath)
+    
+    
