@@ -330,7 +330,7 @@ class Game:
         self.hiding_rooms = None
         self.num_spoons = len(players) - 1
         
-        json_to_dict()
+        self.json_to_dict()
         
     def json_to_dict(self):
         """Converts json file instance variable to relevant dictionaries. 
@@ -345,8 +345,8 @@ class Game:
         """
         with open(self.hiding_info, 'r', encoding = 'utf-8') as reader:
             dict1 = dict(json.load(reader))
-            self.hiding_rooms = dict1['hiding_rooms']
-            self.hiding_spots = dict1['hiding_spots']
+            self.hiding_rooms = dict(dict1['hiding_rooms'])
+            self.hiding_spots = dict(dict1['hiding_spots'])
             
     # algorithm #1 - Gosi
     def set_hiding_spot(self, difficulty):
@@ -396,7 +396,9 @@ class Game:
         all_rooms = self.hiding_rooms.values()
         all_hiding_spots = set()
         for room in all_rooms:
-            all_hiding_spots = set(room) | all_hiding_spots
+            all_hiding_spots |= set(
+                (spot[0], spot[1], spot[2]) for spot in room)
+                        
         all_hiding_spots = list(all_hiding_spots)
         
         weighted_hiding_spots = all_hiding_spots.copy()
@@ -405,14 +407,17 @@ class Game:
                 for likelihood in range(spot[1] - 1):
                     weighted_hiding_spots.append(spot)
         
-        for spoon in range(num_spoons):
+        for spoon in range(self.num_spoons):
             hide_spot = weighted_hiding_spots[
                 random.randint(0, len(weighted_hiding_spots)-1)][0]
-            self.hiding_rooms[self.hiding_spots[hide_spot]][hide_spot][2] = True
+            room = self.hiding_spots[hide_spot]
+            for key in self.hiding_rooms[room]:
+                if key[0] == hide_spot:
+                    key[2] = True
             
     def __str__(self):
         remaining_spoons = 0
-        for value in self.hiding_rooms:
+        for value in self.hiding_rooms.values():
             for spot in value:
                 if spot[2]:
                     remaining_spoons += 1
@@ -421,10 +426,10 @@ class Game:
             if remaining_spoons >= self.num_spoons:
                     break
                 
-        print(f"There is/are {remaining_spoons} spoon(s) left!")
+        return(f"There is/are {remaining_spoons} spoon(s) left!")
         
     def __repr__(self):
-        print(f"Here are the hiding spot details: {self.hiding_rooms}")
+        return(f"Here are the hiding spot details: {self.hiding_rooms}")
         
             
 def main(filepath): 
@@ -438,7 +443,9 @@ def main(filepath):
         
         game_state = Game([human, cpu1, cpu2], filepath)
         game_state.set_hiding_spot('hard')
-        game.state.hid
+        game_state.hide_spoons()
+        
+        print(game_state)
 
         keep_playing = input("Would you like to play again? Y/N: ")
         is_playing = True if keep_playing == 'Y' else False
