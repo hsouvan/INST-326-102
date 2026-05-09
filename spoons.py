@@ -5,15 +5,13 @@ from argparse import ArgumentParser
 from sys import argv
 
 class Player:
-    """Representation of player
+    """Abstract Representation of Player
     
     Attributes:
         name (str): name of the player
         cards (list): player's current card deck
-        is_cpu (bool): whether or not a player is a computer, True if yes,
-            default is False / human player
+        mode (str): current mode of the player, default is "cards"
     """
-    
     def __init__(self, name):
         """Create a player
         
@@ -21,16 +19,17 @@ class Player:
             name (str): name of the player
         
         Side effects:
-            initialize the attributes"""
+            initialize the attributes
+        """
         self.name = name
         self.cards = []
         self.mode = "cards"
     
     def dealing(self, card_deck):
-        """Dealing the card for each player
+        """Deal the cards for each player
         
         Args:
-            card_deck (list): pile of cards
+            card_deck (list): pile of cards from the Game class
         
         Side effects:
             add cards into players's card deck
@@ -43,41 +42,43 @@ class Player:
         print(f"{self.name}'s card deck: {self.cards}")
     
     def draw_card(self, card_deck):
-        """Draws a card from the deck (random) and add to player's hand
+        """Draw a card from card_deck randomly and add to player's card deck
         
         Args:
-            card_deck (list): pile of cards remaining
+            card_deck (list): pile of cards from the Game class
             
         Side effects:
             add a card into player's card deck
-            remove card from the card_deck
-            print player's current card deck
+            remove card from card_deck
         """
         card = random.choice(card_deck)
         self.cards.append(card)
         card_deck.remove(card)
     
     def trash_pile(self, card_deck):
-        """
-        """
-        raise NotImplementedError
+        """Description (abstract method)
         
+        Args:
+            card_deck (list): pile of cards from the Game class
+        """
+        raise NotImplementedError  
         
     def swap_card (self, other):
-        """Manage human player’s turn in discarding one of their card
+        """Allow player to discard one of their card to the next player 
+        (abstract method)
         
         Args: 
             other (Player): the next player
-        
         """
         raise NotImplementedError
         
     def check_four_of_a_kind(self):
-        """Checks for four of a kind in a player's hand.
+        """Check of player have four of a kind
         
         Side effects:
-            Once a player is confirmed to have four of a kind,
-            they start checking for spoons.
+            change the mode attribute to "spoons" if they have four of a kind
+            print the message the player have four of a kind and can start
+                searching for the spoons
         """
         ranks = [card[:-1] for card in self.cards]
 
@@ -85,33 +86,33 @@ class Player:
             if ranks.count(rank) == 4:
                 self.mode = "spoons"
         if self.mode == "spoons":
-            print(f"{self.name} has 4 of a kind! They can now search for " +
-                      "the spoon!")
+            print(f"{self.name} has 4 of a kind! They can now search for the " 
+                      "spoon!")
 
     def search(self, hiding_rooms):
-        """Allows a player to determine whether a hiding spot has a spoon (True)
-        or not (False). If a spoon is found, they win and the game ends.
+        """Allow player to search for the spoon (abstract method)
         
         Args:
             hiding_rooms (dict): hiding rooms which each have lists of hiding
-            spots. Each hiding spot is a list that looks like this:
-            [spot_name (str), likelihood (int), has_spoon (bool)]
-        
-        Returns:
-            bool: True or False depending on whether there is a spoon hidden in 
-                that hiding spot
+                spots
         """
         raise NotImplementedError
     
     def set_skill(self, skills_list):
-        """
+        """Give player a skill (abstract method)
+        
+        Args:
+            skills_list (list): list of premade skills
         """
         pass
-        
-    
+
 
 class HumanPlayer(Player):
+    """Representation of Human Player
     
+    Attributes:
+        skill (str) = name of the skill that the player chose
+    """
     def __init__(self, name):
         """Create a player
         
@@ -119,56 +120,64 @@ class HumanPlayer(Player):
             name (str): name of the player
         
         Side effects:
-            initialize the attributes"""
+            initialize the parent class and subclass attributes
+        """
         self.name = name
         self.cards = []
         self.skill = None
         self.mode = "cards"
     
     def swap_card (self, other):
-        """Manage human player’s turn in discarding one of their card
+        """Allow player to discard one of their card to the next player
         
         Args: 
             other (Player): the next player
         
         Side effects:
             print player's current card deck
-            ask player what card to discard to the next player, 
-            delete the card from player’s card deck, 
+            ask player what card to discard to the next player
+            delete the card from player’s card deck
             add the card to the next player’s card deck
         """
         print(f"{self.name}'s current card deck: {self.cards}")
-        chosen_card = input("What card do you want to discard to the next " + 
+        chosen_card = input("What card do you want to discard to the next "
                             "player?\n").upper()
         self.cards.remove(chosen_card)
         other.cards.append(chosen_card)
         
     def trash_pile(self, card_deck):
+        """Description (similar to swap_card)
+        
+        Args:
+            card_deck (list): pile of cards from the Game class
+        
+        Side effects:
+            print player's current card deck
+            ask player what card to discard to card_deck
+            delete the card from player’s card deck
+            add the card back to card_deck
+        """
         print(f"{self.name}'s current card deck: {self.cards}")
-        chosen_card = input("What card do you want to discard to the next " + 
+        chosen_card = input("What card do you want to discard to the next "
                             "player?\n").upper()
         self.cards.remove(chosen_card)
         card_deck.append(chosen_card)
     
     def search(self, hiding_rooms):
-        """Allows a player to determine whether a hiding spot has a spoon (True)
-        or not (False). If a spoon is found, they win and the game ends.
+        """Allow player to search for the spoon
         
         Args:
             hiding_rooms (dict): hiding rooms which each have lists of hiding
-            spots. Each hiding spot is a list that looks like this:
-            [spot_name (str), likelihood (int), has_spoon (bool)]
+                spots
         
         Returns:
             bool: True or False depending on whether there is a spoon hidden in 
                 that hiding spot
             
-        Side Effects: 
-            Prompts user for inputs for selecting room and hiding spot.
-            Prints result of a search to the terminal (includes invalid)
-            input messages or success/failure messages
+        Side effects: 
+            ask user for which room and hiding spot to search
+            print result of the search, including invalid searches
         """
-        
         print("Rooms:")
         for room in hiding_rooms:
             print(room)
@@ -186,10 +195,24 @@ class HumanPlayer(Player):
         selected_spot = input("Which spot do you want to search?\n").lower()
         return self.check_spot(hiding_rooms, searched_room, selected_spot)
 
-    #separated this portion of the search method for reusability
-    def check_spot(self, hiding_rooms, room, selected_spot):
+    def check_spot(self, hiding_rooms, room, hiding_spot):
+        """Search for the spoon, specifically the hiding spot
+        
+        Args:
+            hiding_rooms (dict): hiding rooms which each have lists of hiding
+                spots
+            room (str): room of the hiding spot
+            hiding_spot (str): hiding spot that is selected
+        
+        Returns:
+            bool: True or False depending on whether there is a spoon hidden in 
+                that hiding spot
+        
+        Side effects: 
+            print result of the search, including invalid searches
+        """
         for spot in hiding_rooms[room]:
-            if spot[0] == selected_spot:
+            if spot[0] == hiding_spot:
                 if spot[2]:
                     print(f"A spoon has been found! {self.name} WINS!!!")
                     return True
@@ -206,7 +229,9 @@ class HumanPlayer(Player):
             skills_list (list): list of premade skills
             
         Side effects:
-            Asks what skill the player wants to choose from.   
+            asks what skill the player wants to choose
+            set skill attribute to the chosen skill
+            remove the chosen skill from skills_list
         """
         print("Available skills:")
         for i, skill in enumerate(skills_list):
@@ -216,8 +241,16 @@ class HumanPlayer(Player):
         skills_list.remove(self.skill)
         
     #SKILLS RELATED TO SEARCHING FOR SPOONS
-    #SPOON COMPASS
     def spoon_compass(self, hiding_rooms):
+        """Point to the room(s) where the spoon(s) is hiding in
+        
+        Args:
+            hiding_rooms (dict): hiding rooms which each have lists of hiding
+                spots
+        
+        Side effects:
+            print the statement of the room(s) the compass is pointing to
+        """
         rooms_with_spoons = []
         
         for room in hiding_rooms:
@@ -229,13 +262,28 @@ class HumanPlayer(Player):
         
         if len(rooms_with_spoons) == 1:
             print(f"The compass strongly points towards the {rooms_with_spoons}"
-                  + "!")
+                    "!")
         else:
             print("The compass is spinning its pointer between two rooms!")
             print(f"It points to the following rooms: {rooms_with_spoons}")
     
-    #OH SHINY!
     def oh_shiny(self, hiding_rooms):
+        """Tell the player if the selected room have spoons or not, and if the 
+        room have spoons, player get a free chance to pick a hiding spot to
+        search
+        
+        Args:
+            hiding_rooms (dict): hiding rooms which each have lists of hiding
+                spots
+        
+        Returns:
+            bool: True or False depending on whether there is a spoon hidden in 
+                that hiding spot
+        
+        Side effects: 
+            ask user for which room and hiding spot to search
+            print result of the search, including invalid searches
+        """
         room = input("Pick a room to scan:\n").lower()
         
         if room not in hiding_rooms:
@@ -249,8 +297,7 @@ class HumanPlayer(Player):
             return False
         
         print(f"Your scan revealed a spoon in the {room}!")
-        #now that a spoon was scanned in selected room, follow-up
-        #in the same turn for searching a spot
+        
         print("Now you can search for a spot the spoon might be in:")
         for spot in hiding_rooms[room]:
             print(spot[0])
@@ -260,18 +307,19 @@ class HumanPlayer(Player):
     
     
 class ComputerPlayer(Player):
-
+    """Representation of Human Player
+    """
     def swap_card(self, other):
-        """Allows the computer to decide what card to discard in Spoons.
+        """Allow player to discard one of their card to the next player
         
-        Parameters:
+        Argss:
             other (Player): the next player 
 
 
-        Side Effects:
-            Removes the discarded card from cpu_hand
-            Adds the discarded card to the next player
-            print current card deck of the computer 
+        Side effects:
+            print player's current card deck after discarding it
+            delete the card from player’s card deck
+            add the card to the next player’s card deck
         """
         ranks = [card[:-1] for card in self.cards]
         card_to_discard = None
@@ -289,6 +337,16 @@ class ComputerPlayer(Player):
         print(f"{self.name}'s current card deck: {self.cards}")
     
     def trash_pile(self, card_deck):
+        """Description (similar to swap_card)
+        
+        Args:
+            card_deck (list): pile of cards from the Game class
+        
+        Side effects:
+            print player's current card deck after discarding it
+            delete the card from player’s card deck
+            add the card back to card_deck
+        """
         ranks = [card[:-1] for card in self.cards]
         card_to_discard = None
         
@@ -305,16 +363,18 @@ class ComputerPlayer(Player):
         print(f"{self.name}'s current card deck: {self.cards}")
     
     def search(self, hiding_rooms):
-        """Control how the computer search for spoons
+        """Allow player to search for the spoon
         
         Args:
             hiding_rooms (dict): hiding rooms which each have lists of hiding
-            spots. Each hiding spot is a list that looks like this:
-            [spot_name (str), likelihood (int), has_spoon (bool)]
+                spots
         
         Returns:
             bool: True or False depending on whether there is a spoon hidden in 
                 that hiding spot
+        
+        Side effects: 
+            print result of the search, including invalid searches
         """
         room = random.choice(list(hiding_rooms.keys()))
         spot = random.choice(hiding_rooms[room])
@@ -327,10 +387,10 @@ class ComputerPlayer(Player):
         else:
             print(f"{self.name} found nothing.")
             return False
-    
-    
+
+
 class Game:
-    """Class Representation of Spoons
+    """Representation of Spoons Game
     
     Attributes:
         hiding_rooms (dict): collection of hiding spots (list of tuples)
@@ -338,16 +398,24 @@ class Game:
             hiding spot and its likelihood value, rooms do not have 
             likelihoods. All hiding spots musthave unique names.
         hiding_spots (dict): The keys are all possible hiding spots, and the 
-            values are the rooms in which they are located 
-        hiding_info (str): name of the json file in which the hiding spot and 
-            hiding room dictionaries are located
+            values are the rooms in which they are located
         players (list): a list of Player objects, the human player will always
             be the first item in the list, followed by two computers
         num_spoons (int): number of spoons to be found, usually one less than 
             the number of players
-    """
-    
+        skills_list (list): list of premade skills
+    """ 
     def __init__(self, players, hiding_info):
+        """Description
+        
+        Args:
+            players (list): a list of players
+            hiding_info (str): name of the json file in which the hiding spot 
+                and hiding room dictionaries are located
+        
+        Side effects:
+            initialize the attributes
+        """
         self.card_deck = ["AH", "2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", 
                        "10H", "JH", "QH", "KH", "AD", "2D", "3D", "4D", "5D", 
                        "6D", "7D", "8D", "9D", "10D", "JD", "QD", "KD", "AC", 
@@ -364,13 +432,13 @@ class Game:
     def json_to_dict(self, hiding_info):
         """Converts json file instance variable to relevant dictionaries.
         
-        Primary Author: Gosi
+        Args:
+            hiding_info (str): name of the json file in which the hiding spot 
+                and hiding room dictionaries are located
         
-        Techniques Demonstrated: json.load(), with keyword
-        
-        Side Effects: 
-            Changes values of hiding_rooms and hiding_spots to the dictionaries
-            in the json file
+        Side effects: 
+            changes values of hiding_rooms and hiding_spots to the dictionaries
+                in the json file
         """
         with open(hiding_info, 'r', encoding = 'utf-8') as reader:
             dict1 = dict(json.load(reader))
@@ -378,18 +446,16 @@ class Game:
             self.hiding_spots = dict(dict1['hiding_spots'])
             
     def set_likelihood(self, difficulty):
-        """Dictates how likely a spoon is to be in a hiding_spot based on chosen 
-        difficulty. 
-        
-        Primary Author: Gosi
+        """Indicate how likely a spoon is to be in a hiding_spot based on chosen 
+        difficulty level
         
         Args:
             difficulty (str): value of 'easy', 'medium', or 'hard', that 
-                dictates the range of likelihood between the hiding spots.
+                dictates the range of likelihood between the hiding spots
         
         Side effects: 
-            Changes the likelihood value of hiding spots in the dictionary of 
-                hiding rooms.
+            changes the likelihood value of hiding spots in the dictionary of 
+                hiding rooms
         
         Raises:
             ValueError: if provided a invalid difficulty level
@@ -406,18 +472,15 @@ class Game:
                     hiding_spot[1] = random.randint(1, 3)
                 else:
                     return ValueError("Invalid Difficulty Level.")
-    
                 
     def hide_spoons(self):
         """Sets index two of of a hiding spot in the dictionary hiding rooms to 
         True if a spoon will be placed there. There will be number of 
         players - 1 spoons hidden in a given game most often. 
         
-        Primary Author: Gosi
-        
         Side Effects: 
-            Changes the value of hiding_spot[2] where hiding spot is a 
-            value in hiding rooms. True means a spoon is hidden there.
+            changes the value of hiding_spot[2] to true if a spoon is hidden 
+                there
         """
         all_rooms = self.hiding_rooms.values()
         all_hiding_spots = set()
@@ -443,7 +506,18 @@ class Game:
 
     def turn(self, player):
         """Determines if a player is still trying for four of a kind,
-        or searching for spoons.
+        or searching for spoons
+        
+        Args:
+            player (Player): the player
+        
+        Returns:
+            bool: True or False depending on whether the player has found a 
+                spoon
+        
+        Side effects:
+            ask human player if they want to use their skill during their search
+                turn
         """
         player_index = self.players.index(player)
         if player.mode == "cards":
@@ -474,6 +548,9 @@ class Game:
     
     def play(self):
         """Play the Game
+        
+        Side effects:
+            print a message that the game ended
         """
         win = False
         for player in self.players:
@@ -486,16 +563,17 @@ class Game:
             player = self.players[turn % len(self.players)]
             win = self.turn(player)
         print("Game End!")           
-        
-            
+
+
 def main(filepath):
-    """
-    Prompts the user for their name and the difficulty they desire. Sets up the
-    player objects for the Game instance. It also runs the game through a Game 
-    instance.
+    """Set up and run the game
 
     Args:
-        filepath (str): _description_
+        filepath (str): name of the json file in which the hiding spot 
+            and hiding room dictionaries are located
+    
+    Side effects:
+        ask the player's name and difficulty level
     """
     players = []
     player_name = input("What is your name? ").capitalize()
@@ -509,20 +587,21 @@ def main(filepath):
     game.hide_spoons()
     
     game.play()
-        
-    
+          
 def parse_args(arglist):
-    """Reads in filepath to json file of hiding spot information with hiding 
-    room and hiding spot dictionaries
+    """Parse command-line arguments
     
-    Primary Author: Gosi
+    Args:
+        arglist (list of str): arguments from the command line
+    
+    Returns:
+        namespace: the parsed arguments, as a namespace
     """
     argpar = ArgumentParser()
-    argpar.add_argument("filepath", help = """a filepath to json file of hiding
-                        locations, should be two dictionaries named hiding_rooms
-                        and hiding_spots""")
+    argpar.add_argument("filepath", help="a filepath to json file of hiding "
+                        "locations, should be two dictionaries named "
+                        "hiding_rooms and hiding_spots")
     return argpar.parse_args(arglist)
-    
     
 if __name__ == "__main__":
     args = parse_args(argv[1:])
