@@ -79,6 +79,9 @@ class Player:
             change the mode attribute to "spoons" if they have four of a kind
             print the message the player have four of a kind and can start
                 searching for the spoons
+        
+        Techniques demonstrated:
+            list comprehension
         """
         ranks = [card[:-1] for card in self.cards]
 
@@ -210,6 +213,9 @@ class HumanPlayer(Player):
         
         Side effects: 
             print result of the search, including invalid searches
+        
+        Techniques demonstrated:
+            helper methods, nested iteration, conditional statements
         """
         for spot in hiding_rooms[room]:
             if spot[0] == hiding_spot:
@@ -229,9 +235,13 @@ class HumanPlayer(Player):
             skills_list (list): list of premade skills
             
         Side effects:
+            prints all available skills
             asks what skill the player wants to choose
             set skill attribute to the chosen skill
             remove the chosen skill from skills_list
+        
+        Techniques demonstrated:
+            list removal
         """
         print("Available skills:")
         for i, skill in enumerate(skills_list):
@@ -250,6 +260,9 @@ class HumanPlayer(Player):
         
         Side effects:
             print the statement of the room(s) the compass is pointing to
+        
+        Techniques demonstrated:
+            nested iteration, conditional statements
         """
         rooms_with_spoons = []
         
@@ -283,6 +296,9 @@ class HumanPlayer(Player):
         Side effects: 
             ask user for which room and hiding spot to search
             print result of the search, including invalid searches
+        
+        Techniques demonstrated:
+            helper method reuse, user input validations 
         """
         room = input("Pick a room to scan:\n").lower()
         
