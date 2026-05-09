@@ -64,6 +64,9 @@ class Player:
         
         Args:
             card_deck (list): pile of cards from the Game class
+        
+        Techniques demonstrated:
+            abstract methods
         """
         raise NotImplementedError  
         
@@ -74,8 +77,6 @@ class Player:
         Args: 
             other (Player): the next player
         
-        Techniques demonstrated:
-            abstract methods
         """
         raise NotImplementedError
         
@@ -188,6 +189,9 @@ class HumanPlayer(Player):
         Side effects: 
             ask user for which room and hiding spot to search
             print result of the search, including invalid searches
+        
+        Techniques demonstrated:
+            user input validations
         """
         print("Rooms:")
         for room in hiding_rooms:
@@ -306,7 +310,7 @@ class HumanPlayer(Player):
             print result of the search, including invalid searches
         
         Techniques demonstrated:
-            helper method reuse, user input validations 
+            helper method reuse 
         """
         room = input("Pick a room to scan:\n").lower()
         
@@ -552,20 +556,25 @@ class Game:
             conditional statement
         """
         if player.mode == "cards":
+            num_of_player = len(self.card_players)
             player_index = self.card_players.index(player)
+            # first player draw card for card_deck
             if player_index == 0:
                 player.draw_card(self.card_deck)
-                other = self.players[self.players.index(player) + 1]
-                player.swap_card(other)
-            elif (player_index + 1) == len(self.players):
+            # determine the "next" player
+            # if there is only one player left
+            if num_of_player == 1:
                 player.trash_pile(self.card_deck)
-            else:
-                other = self.players[self.players.index(player) + 1]
-                player.swap_card(other)
+            else: 
+                # if player is the last one of each turn
+                if (player_index + 1) == num_of_player:
+                    player.trash_pile(self.card_deck)
+                else: 
+                    other = self.card_players[player_index + 1]
+                    player.swap_card(other)
             player.check_four_of_a_kind()
             return False
         elif player.mode == "spoons":
-            self.card_players.remove(player)
             if isinstance(player, HumanPlayer):
                 skill_use = input("Do you want to use your skill? (y/n) ")
                 if skill_use.lower() == "y":
@@ -596,6 +605,8 @@ class Game:
         while not win:
             turn += 1
             player = self.players[turn % len(self.players)]
+            if player.mode == "spoons":
+                self.card_players.remove(player)
             win = self.turn(player)
         print("Game End!")           
 

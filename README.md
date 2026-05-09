@@ -1,6 +1,5 @@
 # Game Project: Spoons Card Game
 
-
 # File Breakdown #
 
 The .json file _hiding_location_info_default.json_ is an example of the json the user would provide, complete with the rooms and hiding spots in which spoons can be hidden. This file is accessed in our code to get the dictionaries with the json file. This file is also inputted throw the terminal.
@@ -9,30 +8,25 @@ The _mainfunc_ file is where we run our main function where we create and use th
 
 The _spoons.py_ file is where we create our Game and Player classes that allow us to run the Game. The Player class focuses on player abilities like taking turns and searching for spoons, while the Game sets up the more overarching aspects like hiding the spoons and fixing the setting of the game.
 
-
-
-| **Method/function**  | **Primary Author** | **Techniques Demonstrated** |
+| **Method/function**  | **Author(s)** | **Techniques Demonstrated** |
 |------------------|-----------------|-------------------------|
 | set_likelihood() | Gosi Alilonu    |                         |
 | hide_spoons()    | Gosi Alilonu    |                         |
 | json_to_dict()   | Gosi Alilonu    | json.load(), with()     |
-| main()           | Gosi Alilonu, Hunter Souvan, Anna Lin|                         |
+| main()           | Hunter Souvan, Gosi Alilonu, Anna Lin|    |
 | parse_args()     | Gosi Alilonu    | ArgumentParser class    |
-| check_four_of_a_kind() | Andrew Nicolosi | list comprehension|
-| search()         | Andrew Nicolosi, Anna Lin|                         |
+| check_four_of_a_kind() | Andrew Nicolosi |                   |
+| search()         | Anna Lin, Andrew Nicolosi| user input validations (Anna Lin)|
 | check_spot()     | Andrew Nicolosi | helper methods          |
 | set_skill()      | Andrew Nicolosi | list removal            |
 | spoon_compass()  | Andrew Nicolosi | nested iteration        |
-| oh_shiny()       | Andrew Nicolosi | helper method reuse, user input validations|
-| swap_card()      | Anna Lin        | abstract method         |
-| turn()           | Anna Lin        | conditional statement   |
+| oh_shiny()       | Andrew Nicolosi | helper method reuse     |
+| swap_card()      | Anna Lin, Hunter Souvan| list comprehension (Hunter Souvan)|
+| turn()           | Hunter Souvan, Anna Lin| conditional statement (Hunter Souvan)|
 | play()           | Anna Lin        | while statement         |
 | dealing()        | Anna Lin        | f-strings containing expressions|
-| trash_pile()     | Anna Lin        |                         |
+| trash_pile()     | Anna Lin        | abstract method         |
 | draw_card()      | Anna Lin        |                         |
-
-
-
 
 Works Cited
 
