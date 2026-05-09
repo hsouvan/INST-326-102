@@ -380,8 +380,8 @@ class ComputerPlayer(Player):
                 card_to_discard = card
                 break
         
-        if card_to_discard == None:
-            card_to_discard = self.cards[0]
+        if card_to_discard is None:
+            card_to_discard = random.choice(self.cards)
         
         self.cards.remove(card_to_discard)
         card_deck.append(card_to_discard)
@@ -448,6 +448,7 @@ class Game:
                        "JC", "QC", "KC", "AS", "2S", "3S", "4S", "5S", "6S", 
                        "7S", "8S", "9S", "10S", "JS", "QS", "KS"]
         self.players = players
+        self.card_players = self.players.copy()
         self.hiding_spots = None
         self.hiding_rooms = None
         self.num_spoons = len(players) - 1
@@ -550,8 +551,8 @@ class Game:
         Techniques demonstrated:
             conditional statement
         """
-        player_index = self.players.index(player)
         if player.mode == "cards":
+            player_index = self.card_players.index(player)
             if player_index == 0:
                 player.draw_card(self.card_deck)
                 other = self.players[self.players.index(player) + 1]
@@ -564,6 +565,7 @@ class Game:
             player.check_four_of_a_kind()
             return False
         elif player.mode == "spoons":
+            self.card_players.remove(player)
             if isinstance(player, HumanPlayer):
                 skill_use = input("Do you want to use your skill? (y/n) ")
                 if skill_use.lower() == "y":
@@ -591,7 +593,6 @@ class Game:
             player.set_skill(self.skills_list)
             player.dealing(self.card_deck)
         turn = -1
-        self.players[0].draw_card(self.card_deck)
         while not win:
             turn += 1
             player = self.players[turn % len(self.players)]
