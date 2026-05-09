@@ -35,6 +35,9 @@ class Player:
             add cards into players's card deck
             remove card from the card_deck
             print player's current card deck
+        
+        Techniques demonstrated:
+            f-strings containing expressions
         """
         self.cards = random.sample(card_deck, 4)
         for card in self.cards:
@@ -69,6 +72,9 @@ class Player:
         
         Args: 
             other (Player): the next player
+        
+        Techniques demonstrated:
+            abstract methods
         """
         raise NotImplementedError
         
@@ -215,7 +221,7 @@ class HumanPlayer(Player):
             print result of the search, including invalid searches
         
         Techniques demonstrated:
-            helper methods, nested iteration, conditional statements
+            helper methods
         """
         for spot in hiding_rooms[room]:
             if spot[0] == hiding_spot:
@@ -262,7 +268,7 @@ class HumanPlayer(Player):
             print the statement of the room(s) the compass is pointing to
         
         Techniques demonstrated:
-            nested iteration, conditional statements
+            nested iteration
         """
         rooms_with_spoons = []
         
@@ -455,6 +461,9 @@ class Game:
         Side effects: 
             changes values of hiding_rooms and hiding_spots to the dictionaries
                 in the json file
+        
+        Techinques demonstrated:
+            use of json.load(), with statements
         """
         with open(hiding_info, 'r', encoding = 'utf-8') as reader:
             dict1 = dict(json.load(reader))
@@ -534,6 +543,9 @@ class Game:
         Side effects:
             ask human player if they want to use their skill during their search
                 turn
+        
+        Techniques demonstrated:
+            conditional statement
         """
         player_index = self.players.index(player)
         if player.mode == "cards":
@@ -567,6 +579,9 @@ class Game:
         
         Side effects:
             print a message that the game ended
+        
+        Techniques demonstrated:
+            while statement
         """
         win = False
         for player in self.players:
@@ -612,6 +627,9 @@ def parse_args(arglist):
     
     Returns:
         namespace: the parsed arguments, as a namespace
+    
+    Techinques demonstrated:
+        ArgumentParser class
     """
     argpar = ArgumentParser()
     argpar.add_argument("filepath", help="a filepath to json file of hiding "
