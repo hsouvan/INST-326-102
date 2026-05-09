@@ -16,13 +16,21 @@ The _spoons.py_ file is where we create our Game and Player classes that allow u
 | set_likelihood() | Gosi Alilonu    |                         |
 | hide_spoons()    | Gosi Alilonu    |                         |
 | json_to_dict()   | Gosi Alilonu    | json.load(), with()     |
-| main()           |                 |                         |
-| check_four_of_a_kind() | Andrew Nicolosi | list comprehension |
-| search()         | Andrew Nicolosi |                         |
-| check_spot()     | Andrew Nicolosi | helper methods           |
+| main()           | Gosi Alilonu, Hunter Souvan, Anna Lin|                         |
+| parse_args()     | Gosi Alilonu    | ArgumentParser class    |
+| check_four_of_a_kind() | Andrew Nicolosi | list comprehension|
+| search()         | Andrew Nicolosi, Anna Lin|                         |
+| check_spot()     | Andrew Nicolosi | helper methods          |
 | set_skill()      | Andrew Nicolosi | list removal            |
 | spoon_compass()  | Andrew Nicolosi | nested iteration        |
-| oh_shiny()       | Andrew Nicolosi | helper method reuse     |
+| oh_shiny()       | Andrew Nicolosi | helper method reuse, user input validations|
+| swap_card()      | Anna Lin        | abstract method         |
+| turn()           | Anna Lin        | conditional statement   |
+| play()           | Anna Lin        | while statement         |
+| dealing()        | Anna Lin        | f-strings containing expressions|
+| trash_pile()     | Anna Lin        |                         |
+| draw_card()      | Anna Lin        |                         |
+
 
 
 
