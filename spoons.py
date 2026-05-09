@@ -59,7 +59,8 @@ class Player:
         card_deck.remove(card)
     
     def trash_pile(self, card_deck):
-        """Description (abstract method)
+        """Allow player to discard one of their card to card_deck 
+        (abstract method)
         
         Args:
             card_deck (list): pile of cards from the Game class
@@ -155,7 +156,8 @@ class HumanPlayer(Player):
         other.cards.append(chosen_card)
         
     def trash_pile(self, card_deck):
-        """Description (similar to swap_card)
+        """Allow player to discard one of their card to card_deck 
+        (Note: it is similar to swap_card)
         
         Args:
             card_deck (list): pile of cards from the Game class
@@ -359,7 +361,8 @@ class ComputerPlayer(Player):
         print(f"{self.name}'s current card deck: {self.cards}")
     
     def trash_pile(self, card_deck):
-        """Description (similar to swap_card)
+        """Allow player to discard one of their card to card_deck 
+        (Note: it is similar to swap_card)
         
         Args:
             card_deck (list): pile of cards from the Game class
