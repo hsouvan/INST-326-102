@@ -16,7 +16,7 @@ The _spoons.py_ file is where we create our Game and Player classes that allow u
 | main()           | Hunter Souvan, Gosi Alilonu, Anna Lin|    |
 | parse_args()     | Gosi Alilonu    | ArgumentParser class    |
 | check_four_of_a_kind() | Andrew Nicolosi |                   |
-| search()         | Anna Lin, Andrew Nicolosi| user input validations (Anna Lin)|
+| search()         | Anna Lin, Andrew Nicolosi| user input validations|
 | check_spot()     | Andrew Nicolosi | helper methods          |
 | set_skill()      | Andrew Nicolosi | list removal            |
 | spoon_compass()  | Andrew Nicolosi | nested iteration        |
