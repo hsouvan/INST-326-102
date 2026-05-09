@@ -21,8 +21,8 @@ The _spoons.py_ file is where we create our Game and Player classes that allow u
 | set_skill()      | Andrew Nicolosi | list removal            |
 | spoon_compass()  | Andrew Nicolosi | nested iteration        |
 | oh_shiny()       | Andrew Nicolosi | helper method reuse     |
-| swap_card()      | Anna Lin, Hunter Souvan| list comprehension (Hunter Souvan)|
-| turn()           | Hunter Souvan, Anna Lin| conditional statement (Hunter Souvan)|
+| swap_card()      | Anna Lin, Hunter Souvan| list comprehension, conditional statement (Hunter Souvan)|
+| turn()           | Andrew Nicolosi, Anna Lin|                |
 | play()           | Anna Lin        | while statement         |
 | dealing()        | Anna Lin        | f-strings containing expressions|
 | trash_pile()     | Anna Lin        | abstract method         |
