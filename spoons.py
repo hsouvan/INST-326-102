@@ -237,7 +237,7 @@ class HumanPlayer(Player):
         return False
 
     def set_skill(self, skills_list):
-        """Lets the player choose a skill.
+        """Let the player choose a skill.
         
         Args:
             skills_list (list): list of premade skills
@@ -289,8 +289,8 @@ class HumanPlayer(Player):
             print(f"It points to the following rooms: {rooms_with_spoons}")
     
     def oh_shiny(self, hiding_rooms):
-        """Tell the player if the selected room have spoons or not, and if the 
-        room have spoons, player get a free chance to pick a hiding spot to
+        """Tell the player if the selected room has spoons or not, and if the 
+        room has spoons, player get a free chance to pick a hiding spot to
         search
         
         Args:
@@ -421,7 +421,7 @@ class Game:
         hiding_rooms (dict): collection of hiding spots (list of tuples)
             where the spoons may be hidden, containing the name of the 
             hiding spot and its likelihood value, rooms do not have 
-            likelihoods. All hiding spots musthave unique names.
+            likelihoods. All hiding spots must have unique names.
         hiding_spots (dict): The keys are all possible hiding spots, and the 
             values are the rooms in which they are located
         players (list): a list of Player objects, the human player will always
@@ -465,7 +465,7 @@ class Game:
             changes values of hiding_rooms and hiding_spots to the dictionaries
                 in the json file
         
-        Techinques demonstrated:
+        Techniques demonstrated:
             use of json.load(), with statements
         """
         with open(hiding_info, 'r', encoding = 'utf-8') as reader:
@@ -486,7 +486,7 @@ class Game:
                 hiding rooms
         
         Raises:
-            ValueError: if provided a invalid difficulty level
+            ValueError: if provided an invalid difficulty level
         """
         rooms = self.hiding_rooms.keys()
         
@@ -502,7 +502,7 @@ class Game:
                     return ValueError("Invalid Difficulty Level.")
                 
     def hide_spoons(self):
-        """Sets index two of of a hiding spot in the dictionary hiding rooms to 
+        """Sets index two of a hiding spot in the dictionary hiding rooms to 
         True if a spoon will be placed there. There will be number of 
         players - 1 spoons hidden in a given game most often. 
         
@@ -631,7 +631,7 @@ def parse_args(arglist):
     Returns:
         namespace: the parsed arguments, as a namespace
     
-    Techinques demonstrated:
+    Techniques demonstrated:
         ArgumentParser class
     """
     argpar = ArgumentParser()
