@@ -73,7 +73,7 @@ class Player:
         raise NotImplementedError
         
     def check_four_of_a_kind(self):
-        """Check of player have four of a kind
+        """Checks if a player has four of a kind.
         
         Side effects:
             change the mode attribute to "spoons" if they have four of a kind
@@ -223,7 +223,7 @@ class HumanPlayer(Player):
         return False
 
     def set_skill(self, skills_list):
-        """Give player a skill
+        """Lets the player choose a skill.
         
         Args:
             skills_list (list): list of premade skills
