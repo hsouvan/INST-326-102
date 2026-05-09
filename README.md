@@ -25,7 +25,7 @@ The _spoons.py_ file is where we create our Game and Player classes that allow u
 | check_spot()     | Andrew Nicolosi | helper methods, conditional statement |
 | set_skill()      | Andrew Nicolosi | list removal            |
 | spoon_compass()  | Andrew Nicolosi | nested iteration        |
-| oh_shiny()       |                 | helper method reuse     |
+| oh_shiny()       | Andrew Nicolosi | helper method reuse     |
 
 
 
