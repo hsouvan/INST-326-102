@@ -73,11 +73,14 @@ class Player:
         raise NotImplementedError
         
     def check_four_of_a_kind(self):
-        """Checks for four of a kind in a player's hand.
+        """Checks if a player has four of a kind.
         
         Side effects:
-            Once a player is confirmed to have four of a kind,
-            they start checking for spoons.
+            Once a player gets four of a kind their mode is changed to "spoons"
+            Prints a message announcing that player can now search for spoons
+        
+        Techniques demonstrated:
+            list comprehension
         """
         ranks = [card[:-1] for card in self.cards]
 
@@ -188,6 +191,24 @@ class HumanPlayer(Player):
 
     #separated this portion of the search method for reusability
     def check_spot(self, hiding_rooms, room, selected_spot):
+        """Checks whether a selected spot has a spoon.
+        
+        Args:
+            hiding_rooms (dict): dictionary of rooms and their hiding spots
+            room (str): the chosen room
+            selected_spot (str): hiding spot chosen by player
+        
+        Side Effects:
+            Prints whether the player foudn a spoon or not, and if the spot
+            they typed in is invalid
+        
+        Returns:
+            bool: True for finding a spoon, False if no found spoon
+            
+        Techniques Demonstrated:
+            helper methods, nested iteration, conditional statements
+        """
+        
         for spot in hiding_rooms[room]:
             if spot[0] == selected_spot:
                 if spot[2]:
@@ -200,13 +221,19 @@ class HumanPlayer(Player):
         return False
 
     def set_skill(self, skills_list):
-        """Give player a skill
+        """Lets the player choose a skill.
         
         Args:
             skills_list (list): list of premade skills
             
         Side effects:
-            Asks what skill the player wants to choose from.   
+            Prints all available skills to terminal
+            Prompts user to pick one
+            Removes the selected skill from the list of skills
+            Assigns the chosen skill to the player
+        
+        Techniques demonstrated:
+            list removal
         """
         print("Available skills:")
         for i, skill in enumerate(skills_list):
@@ -218,6 +245,19 @@ class HumanPlayer(Player):
     #SKILLS RELATED TO SEARCHING FOR SPOONS
     #SPOON COMPASS
     def spoon_compass(self, hiding_rooms):
+        """Skill which reveals the rooms which has spoons in them.
+        
+        Args:
+            hiding_rooms (dict): dictionary of all the rooms and their 
+            respective hiding spots.
+        
+        Side Effects:
+            Prints the rooms that have hints
+            
+        Techniques Demonstrated:
+            nested iteration, conditional statements
+        """
+        
         rooms_with_spoons = []
         
         for room in hiding_rooms:
@@ -236,6 +276,24 @@ class HumanPlayer(Player):
     
     #OH SHINY!
     def oh_shiny(self, hiding_rooms):
+        """Scans a selected room for spoons, if there is at least one spoon,
+        player gets to search all on the same turn.
+        
+        Args: 
+            hiding_rooms(dict): dictionary of all the rooms and hiding spots
+        
+        Side Effects:
+            Prompts the user to choose a room then a hiding spot if the room
+            they picked has a spoon.
+            Prints scan results of the selected room to terminal
+        
+        Returns:
+            bool: True if spoon found, False if not
+        
+        Techniques demonstrated:
+            helped method reuse, user input validation
+        """
+        
         room = input("Pick a room to scan:\n").lower()
         
         if room not in hiding_rooms:
